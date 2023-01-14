@@ -51,7 +51,7 @@ async def send_joystick_position(x, y):
     can_bus.send(message)
     print(f"Joystick position sent: x={x}, y={y}")
 
-
+#Read joystick value, change value to 0-1000
 async def read_joystick_position():
     while True:
         x = xaxi.value
@@ -62,7 +62,7 @@ async def read_joystick_position():
         await send_joystick_position(x, y)
         await asyncio.sleep(0.1)
 
-
+##Listen on can with filter
 async def listen_can(listener):
     while True:
         message_count = listener.in_waiting()
@@ -70,9 +70,14 @@ async def listen_can(listener):
             msg = listener.receive()
             print("Message from: ", hex(msg.id))
             print(msg.data)
+
             #do something with the data
+            ##
+            ##
+            ##
         
         await asyncio.sleep(0.1)
+
 
 async def main():
     matches = [
