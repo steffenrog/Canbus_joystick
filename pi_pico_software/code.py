@@ -1,5 +1,5 @@
 # Author: Steffen Rogne
-# Brief:  Reading analog joystick signals, pack and send over canbus. While receiving messages only from filter.
+# Brief:  Test software, read canbus with filter. Read Analog Joystick, send joystick values over can.
 # 
 #==================================================
 
@@ -7,9 +7,8 @@ import board
 import analogio
 import busio
 from digitalio import DigitalInOut
-from adafruit_mcp2515.canio import Message, RemoteTransmissionRequest
+from adafruit_mcp2515.canio import Message
 from adafruit_mcp2515 import MCP2515 as CAN
-import adafruit_mcp2515
 import asyncio
 import struct
 
