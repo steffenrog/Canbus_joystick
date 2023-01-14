@@ -2,6 +2,17 @@
 # Brief:  Test software, read canbus with filter. Read Analog Joystick, send joystick values over can.
 # 
 #==================================================
+#
+#
+
+##RS485 PINS
+# MISO - Pin 21 (GP16)
+# CS - Pin 22 (GP17)
+# SCK - Pin 24 (GP18)
+# MOSI - Pin 25 (GP19)
+# LED Out - Pin 34(GP 28)
+# 3v3 Out - Pin 36
+# GND - Pin 38
 
 import board
 import analogio
@@ -20,6 +31,7 @@ yaxi = analogio.AnalogIn(board.GP27_A1)
 
 can_bus = CAN(spi, cs)
 
+#Added class for use of mask
 class Match:
     def __init__(self,address,mask,extended: bool):
         self.address = address
@@ -29,11 +41,7 @@ class Match:
 
 
 
-def get_analog_values():
-    x = xaxi.value
-    y = yaxi.value
-    return (x, y)
-
+#Package value, send to bus
 async def send_joystick_position(x, y):
     if not (0 <= x <= 1000) or not (0 <= y <= 1000):
         return
@@ -43,14 +51,17 @@ async def send_joystick_position(x, y):
     can_bus.send(message)
     print(f"Joystick position sent: x={x}, y={y}")
 
+
 async def read_joystick_position():
     while True:
-        (x, y) = get_analog_values()
+        x = xaxi.value
+        y = yaxi.value
         x = x / 65535 * 1000
         y = y / 65535 * 1000
         print(x,y)
         await send_joystick_position(x, y)
         await asyncio.sleep(0.1)
+
 
 async def listen_can(listener):
     while True:
