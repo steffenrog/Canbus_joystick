@@ -19,5 +19,5 @@ def receive_joystick_position():
             x = x 
             y = y 
             print("Joystick position received: x={:.2f}, y={:.2f}".format(x, y))
-
+            #print(message.data)
 receive_joystick_position()

@@ -75,7 +75,7 @@ async def send_joystick_position(x, y):
 ##Stable reading at 0-500-1000. Tmp stable readings.
 async def read_joystick_position():
     while True:
-        x = xaxi.value / 64000 * 1000
+        x = xaxi.value / 65200 * 1000
         y = yaxi.value / 64000 * 1000
         
         scale_x = 100/3
@@ -86,7 +86,9 @@ async def read_joystick_position():
         
         xclamped = scale_x*xamounts
         yclamped = scale_y*yamounts
-        await send_joystick_position(xclamped, yclamped)
+        xclamped-=500
+        yclamped-=500
+        await send_joystick_position(round(xclamped), round(yclamped))
         await asyncio.sleep(0.01)
 
 #Listening on bus for filtered messages.
