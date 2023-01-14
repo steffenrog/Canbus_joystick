@@ -1,5 +1,5 @@
 # Author: Steffen Rogne
-# Brief:  CAN bus test software for receiving and unpacking joystick messages.
+# Brief:  CAN bus test software - receiving
 # 
 #==================================================
 
