@@ -87,7 +87,7 @@ async def read_joystick_position():
         xclamped = scale_x*xamounts
         yclamped = scale_y*yamounts
         await send_joystick_position(xclamped, yclamped)
-        await asyncio.sleep(0.1)
+        await asyncio.sleep(0.01)
 
 #Listening on bus for filtered messages.
 async def listen_can(listener):
@@ -100,7 +100,7 @@ async def listen_can(listener):
 
             #do something with the data
                
-        await asyncio.sleep(0.1)
+        await asyncio.sleep(0.01)
 
 async def main():
     matches = [
