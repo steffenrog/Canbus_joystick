@@ -42,14 +42,10 @@ async def send_joystick_position(x, y):
     #    return
     id = 0x18fdd6F1
     # Create a new byte array with the same size and structure as the button array
-    data = bytearray([0x01, 0x00, 0x01, 0x00, 0xff, 0x00, 0x00, 0x1f])
+    data = bytearray([0x00, 0x00, 0x01, 0x00, 0xff, 0x00, 0x00, 0x1f])
     # Set the x and y values in the correct positions
-    if x < 0:
-        data[0] = 0x10
-    if y < 0:
-        data[2] = 0x10
-    data[1] = abs(x)
-    data[3] = abs(y)
+    data[0] = x #abs(x)
+    data[2] = y #abs(y)
     # Send the message
     message = Message(id=id, data=data, extended=True)
    # can_bus.send(message)
