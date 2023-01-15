@@ -28,7 +28,7 @@ class Match:
 
 #Packing joystickvalues in 0-1000 range for now
 async def send_joystick_position(x, y):
-    if not (-500 <= x <= 500) or not (-500 <= y <= 500):
+    if not (0 <= x <= 1000) or not (0 <= y <= 1000):
         return
     id = 0x18fdd602
     data = struct.pack("ff", x, y)
