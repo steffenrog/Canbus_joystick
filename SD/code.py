@@ -130,18 +130,18 @@ async def send_joystick_position(self, x, y):
         data[5] = data[5] | 0x04
     if not buttons[3]:
         data[5] = data[5] | 0x01
-        if self.config == True:
-            data[6] = data[6] | 0x40
-            self.config = False
-            print("Config sent...")     ##Debugging prints
+        # if self.config == True:
+        #     data[6] = data[6] | 0x40
+        #     self.config = False
+        #     print("Config sent...")     ##Debugging prints
         
     ##Button 5 and 6 still not tested
-    if not buttons[4]:
-        data[6] = data[6] | 0x04
-    if data[6] == 0x04:
-        data[6] = data[6] | 0x40
-        self.config = True
-        print("Config...")              ##Debugging prints
+    # if not buttons[4]:
+    #     data[6] = data[6] | 0x04
+    # if data[6] == 0x04:
+    #     data[6] = data[6] | 0x40
+    #     self.config = True
+    #     print("Config...")              ##Debugging prints
     
     #print(btn1.value, btn2.value, btn3.value, btn4.value) ##Debug print
     
