@@ -38,8 +38,8 @@ cs = DigitalInOut(board.GP17)
 cs.switch_to_output()
 spi = busio.SPI(board.GP18, board.GP19, board.GP16)
 can_bus = CAN(spi, cs)
-yaxi = analogio.AnalogIn(board.GP26_A0)
-xaxi = analogio.AnalogIn(board.GP27_A1)
+xaxi = analogio.AnalogIn(board.GP26_A0)
+yaxi = analogio.AnalogIn(board.GP27_A1)
 btn1 = DigitalInOut(board.GP0)
 btn1.direction = Direction.INPUT
 btn1.pull = Pull.UP
@@ -107,8 +107,8 @@ class Match:
         self.mask = mask
         self.extended = extended
 
-##Send joystick values, adapted to receiving software.
-async def send_joystick_position(self, x, y):
+##Send joystick values, adapted to receiving software. 
+async def send_joystick_position(x, y):
     id = 0x18fdd6F1 ##ID mimics Grayhill
     
     ##Joystick calculations
@@ -179,19 +179,22 @@ async def send_joystick_position(self, x, y):
 
 ##Read analog input, oversamling with middle
 async def read_joystick_position():
+#    Counter = 0
+    
     center_x = 32768        
     center_y = 32768
     dead_zone = 3000
     while True:
+#        Counter += 1
         x_list = []
         y_list = []
-        for i in range(5000):
+        for i in range(2000):
             x_list.append(xaxi.value)           
         for i in range(10):
             y_list.append(yaxi.value)
         x_list.sort()
         y_list.sort()
-        x = x_list[2500]
+        x = x_list[1000]
         y = y_list[5]
         if abs(x - center_x) < dead_zone:
             x = center_x
@@ -199,9 +202,9 @@ async def read_joystick_position():
             y = center_y
             
       #  print(x,y)     ##Debugging print
-      
-        await send_joystick_position(x, y)
-
+#        if Counter % 10 == 0:
+            await send_joystick_position(x, y)
+        await asyncio.sleep(0.01)
 ##Read button states
 async def read_buttons():
     while True:
@@ -209,7 +212,7 @@ async def read_buttons():
         buttons[1] = btn2.value
         buttons[2] = btn3.value
         buttons[3] = btn4.value
-        await asyncio.sleep(0)
+        await asyncio.sleep(0.01)
 
 ##Set LEDs        
 async def set_led():
@@ -223,7 +226,7 @@ async def set_led():
         led_7.value = leds[6]
         led_8.value = leds[7]
         led_9.value = leds[8]
-        await asyncio.sleep(0.1)
+        await asyncio.sleep(0.01)
         
 ##Listening on bus for filtered messages.
 async def listen_can(listener):
@@ -248,13 +251,13 @@ async def listen_can(listener):
                 c = int((msg.data[1]&0xF0) >> 4)
                 led_status[k-1].value= (c==0)		#OK
               
-        await asyncio.sleep(0)
+        await asyncio.sleep(0.01)
 
 ##Running main program, setup filters to subscribe
 async def main():
     matches = [
-           Match(0x00ef0002,0xFF,True),      ##Filter 1
-           Match(0x666,0xFFF,True),     ##Filter 2
+           Match(0x00ef0002,0xFF,True),         ##Filter 1
+           Match(0x666,0xFFF,True),             ##Filter 2
            ]
     
     with can_bus.listen(matches) as listener:
@@ -271,3 +274,29 @@ try:
     asyncio.run(main())
 except KeyboardInterrupt:
     print("Program closed")
+    
+    
+    
+    ## IS this way better?
+    """ async def main():
+    matches = [
+           Match(0x00ef0002,0xFF,True),         ##Filter 1
+           Match(0x666,0xFFF,True),             ##Filter 2
+           ]
+    with can_bus.listen(matches) as listener:
+        asyncio.create_task(listen_can(listener))
+        print("Starting can filters......") ##Debugging print
+    asyncio.create_task(read_joystick_position())
+    print("Reading joystick......")     ##Debugging print
+    asyncio.create_task(read_buttons())
+    print("Reading buttons......")      ##Debugging print
+    while True:
+        await asyncio.sleep(1) """
+        
+        
+        
+        ##comment from AI
+        """ the main() function creates three tasks using the asyncio.create_task() function and starts them independently. 
+        The main function then enters an infinite loop and waits for one second on each iteration using await asyncio.sleep(1).
+
+This way, the tasks will run concurrently, and the main function will not wait for them to complete before starting the second loop.  """
