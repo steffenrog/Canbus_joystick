@@ -38,6 +38,8 @@ cs = DigitalInOut(board.GP17)
 cs.switch_to_output()
 spi = busio.SPI(board.GP18, board.GP19, board.GP16)
 can_bus = CAN(spi, cs)
+
+
 xaxi = analogio.AnalogIn(board.GP26_A0)
 yaxi = analogio.AnalogIn(board.GP27_A1)
 btn1 = DigitalInOut(board.GP0)
@@ -93,7 +95,7 @@ led_9.direction = Direction.OUTPUT
 led_9.value=True
 
 ##Setting the array
-buttons = [True,True,True,True]
+buttons = [True,True,True,True,True,True]
 leds = [True, True, True, True, True, True, True, True, True]
 led_status = [led_1, led_2, led_3, led_4, led_5, led_6, led_7, led_8, led_9]
 
@@ -130,15 +132,17 @@ async def send_joystick_position(x, y):
         data[5] = data[5] | 0x04
     if not buttons[3]:
         data[5] = data[5] | 0x01
-        # if self.config == True:
-        #     data[6] = data[6] | 0x40
-        #     self.config = False
-        #     print("Config sent...")     ##Debugging prints
+    if not buttons[4]:
+        data[6] = data[6] | 0x04
+    if not buttons[5]:
+        data[6] = data[6] | 0x40
+    
+    
         
     ##Button 5 and 6 still not tested
-    # if not buttons[4]:
-    #     data[6] = data[6] | 0x04
-    # if data[6] == 0x04:
+    #if not buttons[4]:
+    #    data[6] = data[6] | 0x04
+    #if data[6] == 0x04:
     #     data[6] = data[6] | 0x40
     #     self.config = True
     #     print("Config...")              ##Debugging prints
@@ -169,7 +173,7 @@ async def send_joystick_position(x, y):
     data[2] = data[2] | (tmp[0] & 0x0c)
     data[3] = tmp[1]
     
-    #print(bytes(data))  ##Debugging print
+    print(bytes(data))  ##Debugging print
     #print(x,y)
     
     #Send canmessage, buttons and joystick
@@ -203,7 +207,7 @@ async def read_joystick_position():
             
       #  print(x,y)     ##Debugging print
 #        if Counter % 10 == 0:
-            await send_joystick_position(x, y)
+        await send_joystick_position(x, y)
         await asyncio.sleep(0.01)
 ##Read button states
 async def read_buttons():
@@ -212,6 +216,8 @@ async def read_buttons():
         buttons[1] = btn2.value
         buttons[2] = btn3.value
         buttons[3] = btn4.value
+        buttons[4] = btn5.value
+        buttons[5] = btn6.value
         await asyncio.sleep(0.01)
 
 ##Set LEDs        
@@ -226,7 +232,7 @@ async def set_led():
         led_7.value = leds[6]
         led_8.value = leds[7]
         led_9.value = leds[8]
-        await asyncio.sleep(0.01)
+    await asyncio.sleep(0.01)
         
 ##Listening on bus for filtered messages.
 async def listen_can(listener):
@@ -277,26 +283,29 @@ except KeyboardInterrupt:
     
     
     
-    ## IS this way better?
-    """ async def main():
-    matches = [
-           Match(0x00ef0002,0xFF,True),         ##Filter 1
-           Match(0x666,0xFFF,True),             ##Filter 2
-           ]
-    with can_bus.listen(matches) as listener:
-        asyncio.create_task(listen_can(listener))
-        print("Starting can filters......") ##Debugging print
-    asyncio.create_task(read_joystick_position())
-    print("Reading joystick......")     ##Debugging print
-    asyncio.create_task(read_buttons())
-    print("Reading buttons......")      ##Debugging print
-    while True:
-        await asyncio.sleep(1) """
-        
-        
-        
-        ##comment from AI
-        """ the main() function creates three tasks using the asyncio.create_task() function and starts them independently. 
-        The main function then enters an infinite loop and waits for one second on each iteration using await asyncio.sleep(1).
+#     ## IS this way better?
+#     """ async def main():
+#     matches = [
+#            Match(0x00ef0002,0xFF,True),         ##Filter 1
+#            Match(0x666,0xFFF,True),             ##Filter 2
+#            ]
+#     with can_bus.listen(matches) as listener:
+#         asyncio.create_task(listen_can(listener))
+#         print("Starting can filters......") ##Debugging print
+#     asyncio.create_task(read_joystick_position())
+#     print("Reading joystick......")     ##Debugging print
+#     asyncio.create_task(read_buttons())
+#     print("Reading buttons......")      ##Debugging print
+#     while True:
+#         await asyncio.sleep(1) """
+#         
+#         
+#         
+#         ##comment from AI
+#         """ the main() function creates three tasks using the asyncio.create_task() function and starts them independently. 
+#         The main function then enters an infinite loop and waits for one second on each iteration using await asyncio.sleep(1).
+# 
+# This way, the tasks will run concurrently, and the main function will not wait for them to complete before starting the second loop.  """
+# 
 
-This way, the tasks will run concurrently, and the main function will not wait for them to complete before starting the second loop.  """
+   
