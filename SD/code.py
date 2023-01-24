@@ -5,20 +5,20 @@
 #
 #
 ##RS485 PINS
-# MISO - Pin 21 (GP16)
-# CS - Pin 22 (GP17)
-# SCK - Pin 24 (GP18)
-# MOSI - Pin 25 (GP19)
-# LED Out - Pin 34(GP 28)
+# MISO  - Pin 21 (GP16)
+# CS    - Pin 22 (GP17)
+# SCK   - Pin 24 (GP18)
+# MOSI  - Pin 25 (GP19)
+# GND   - Pin 38
 # 3v3 Out - Pin 36
-# GND - Pin 38
-
+# LED Out - Pin 34(GP 28)
+#
 ##JOYSTICK PINS
 #GP26_A0, GP27_A1#
-
+#
 ##BUTTON PINS
-#GP0, GP1, GP2,GP3, GP4, GP5#
-
+#GP0, GP1, GP2, GP3, GP4, GP5#
+#
 ##LED PINS ## not connected yet
 #GP6, GP7, GP8, GP9, GP10, GP11, GP12, GP13, GP14#
 
@@ -39,9 +39,9 @@ cs.switch_to_output()
 spi = busio.SPI(board.GP18, board.GP19, board.GP16)
 can_bus = CAN(spi, cs)
 
+yaxi = analogio.AnalogIn(board.GP26_A0)
+xaxi = analogio.AnalogIn(board.GP27_A1)
 
-xaxi = analogio.AnalogIn(board.GP26_A0)
-yaxi = analogio.AnalogIn(board.GP27_A1)
 btn1 = DigitalInOut(board.GP0)
 btn1.direction = Direction.INPUT
 btn1.pull = Pull.UP
@@ -84,6 +84,7 @@ led_5.value=True
 led_6 = DigitalInOut(board.GP11)
 led_6.direction = Direction.OUTPUT
 led_6.value=True
+
 led_7 = DigitalInOut(board.GP12)
 led_7.direction = Direction.OUTPUT
 led_7.value=True
@@ -96,8 +97,8 @@ led_9.value=True
 
 ##Setting the array
 buttons = [True,True,True,True,True,True]
-leds = [True, True, True, True, True, True, True, True, True]
-led_status = [led_1, led_2, led_3, led_4, led_5, led_6, led_7, led_8, led_9]
+leds = [True,True,True,True,True,True,True,True,True]
+led_status = [led_1,led_2,led_3,led_4,led_5,led_6,led_7,led_8,led_9]
 
 #Joystick resolution, calculations based on this
 joy_res = 12
@@ -137,9 +138,7 @@ async def send_joystick_position(x, y):
     if not buttons[5]:
         data[6] = data[6] | 0x40
     
-    
-        
-    ##Button 5 and 6 still not tested
+    ##Button 6 and 4 for configuration - not in current version
     #if not buttons[4]:
     #    data[6] = data[6] | 0x04
     #if data[6] == 0x04:
@@ -173,8 +172,7 @@ async def send_joystick_position(x, y):
     data[2] = data[2] | (tmp[0] & 0x0c)
     data[3] = tmp[1]
     
-    print(bytes(data))  ##Debugging print
-    #print(x,y)
+    #print(bytes(data))  ##Debugging print
     
     #Send canmessage, buttons and joystick
     message = Message(id=id, data=bytes(data), extended=True)
@@ -183,13 +181,10 @@ async def send_joystick_position(x, y):
 
 ##Read analog input, oversamling with middle
 async def read_joystick_position():
-#    Counter = 0
-    
     center_x = 32768        
     center_y = 32768
     dead_zone = 3000
     while True:
-#        Counter += 1
         x_list = []
         y_list = []
         for i in range(2000):
@@ -206,10 +201,11 @@ async def read_joystick_position():
             y = center_y
             
       #  print(x,y)     ##Debugging print
-#        if Counter % 10 == 0:
+      
         await send_joystick_position(x, y)
         await asyncio.sleep(0.01)
-##Read button states
+        
+##Read button states, will be moved.
 async def read_buttons():
     while True:
         buttons[0] = btn1.value
@@ -220,7 +216,7 @@ async def read_buttons():
         buttons[5] = btn6.value
         await asyncio.sleep(0.01)
 
-##Set LEDs        
+##Set LEDs, will be moved.        
 async def set_led():
     while True:
         led_1.value = leds[0]
@@ -232,7 +228,7 @@ async def set_led():
         led_7.value = leds[6]
         led_8.value = leds[7]
         led_9.value = leds[8]
-    await asyncio.sleep(0.01)
+        await asyncio.sleep(0.01)
         
 ##Listening on bus for filtered messages.
 async def listen_can(listener):
@@ -244,16 +240,8 @@ async def listen_can(listener):
             #print("Message from: ", hex(msg.id))   ##Debugging print
             #print(msg.data)
             
-            #do something with the data
-
-            if msg.id == 0x18eff302:
+            if msg.id == 0x18eff102:
                 k = msg.data[0]
-#                if k == 6:
-#                    c = (msg.data[1]&0xF0) >> 4
-#                    r = data[1] & 0x0f
-#                    l = data[2] & 0x0f
-                    
-                #else:
                 c = int((msg.data[1]&0xF0) >> 4)
                 led_status[k-1].value= (c==0)		#OK
               
@@ -280,32 +268,3 @@ try:
     asyncio.run(main())
 except KeyboardInterrupt:
     print("Program closed")
-    
-    
-    
-#     ## IS this way better?
-#     """ async def main():
-#     matches = [
-#            Match(0x00ef0002,0xFF,True),         ##Filter 1
-#            Match(0x666,0xFFF,True),             ##Filter 2
-#            ]
-#     with can_bus.listen(matches) as listener:
-#         asyncio.create_task(listen_can(listener))
-#         print("Starting can filters......") ##Debugging print
-#     asyncio.create_task(read_joystick_position())
-#     print("Reading joystick......")     ##Debugging print
-#     asyncio.create_task(read_buttons())
-#     print("Reading buttons......")      ##Debugging print
-#     while True:
-#         await asyncio.sleep(1) """
-#         
-#         
-#         
-#         ##comment from AI
-#         """ the main() function creates three tasks using the asyncio.create_task() function and starts them independently. 
-#         The main function then enters an infinite loop and waits for one second on each iteration using await asyncio.sleep(1).
-# 
-# This way, the tasks will run concurrently, and the main function will not wait for them to complete before starting the second loop.  """
-# 
-
-   
