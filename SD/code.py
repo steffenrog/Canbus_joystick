@@ -168,14 +168,13 @@ async def send_joystick_position(x, y):
     if y < 0: data[2] = data[2] | 0x10
 
     tmp = int(abs(x)).to_bytes(2,'big', signed=False)
-    data[0] = data[0] | ((tmp[0] << 6) & 0xC0)  # 10 bit ...
-    data[0] = data[0] | (tmp[0] & 0x0c)         # 12 bit ...
-    data[1] = tmp[1]                            #  8 bit...
-
+    data[0] = data[0] | ((tmp[0] << 6) & 0xC0)  # 10 bit ... 
+    data[0] = data[0] | (tmp[0] & 0x0c)         # 12 bit ... 
+    data[1] = tmp[1]                            #  8 bit ... 
     tmp = int(abs(y)).to_bytes(2,'big', signed=False)
-    data[2] = data[2] | ((tmp[0] << 6) & 0xC0)
-    data[2] = data[2] | (tmp[0] & 0x0c)
-    data[3] = tmp[1]
+    data[2] = data[2] | ((tmp[0] << 6) & 0xC0)   
+    data[2] = data[2] | (tmp[0] & 0x0c)          
+    data[3] = tmp[1]                            
     
     print(bytes(data))  ##Debugging print
     
@@ -189,6 +188,7 @@ async def read_joystick_position():
     center_x = 32768        
     center_y = 32768
     dead_zone = 3000
+    
     while True:
         x_list = []
         y_list = []
@@ -237,7 +237,7 @@ async def listen_can(listener):
               
         await asyncio.sleep(0.01)
 
-##Running main program, setup filters to subscribe
+##setup filters to subscribe
 async def main():
     matches = [
            Match(0x00ef0002,0xFF,True),         ##Filter 1
@@ -246,11 +246,13 @@ async def main():
     
     with can_bus.listen(matches) as listener:
         task1 = asyncio.create_task(listen_can(listener))
-        print("Starting can filters......") ##Debugging print
+        print("Starting can filters......") 
         task2 = asyncio.create_task(read_joystick_position())
-        print("Reading joystick......")     ##Debugging print
+        print("Reading joystick......")    
          
-        await asyncio.gather(task1, task2)
+        await task1
+        await task2
+        
         
 try:
     asyncio.run(main())
