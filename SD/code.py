@@ -64,47 +64,45 @@ btn6.direction = Direction.INPUT
 btn6.pull = Pull.UP
 
 ##LED connections
-led_1 = DigitalInOut(board.GP11)
-led_1.direction = Direction.OUTPUT
-led_1.value=True
+led1 = DigitalInOut(board.GP11)
+led1.direction = Direction.OUTPUT
+led1.value=True
 
-led_2 = DigitalInOut(board.GP10)
-led_2.direction = Direction.OUTPUT
-led_2.value=True
+led2 = DigitalInOut(board.GP10)
+led2.direction = Direction.OUTPUT
+led2.value=True
 
-led_3 = DigitalInOut(board.GP9)
-led_3.direction = Direction.OUTPUT
-led_3.value=True
+led3 = DigitalInOut(board.GP9)
+led3.direction = Direction.OUTPUT
+led3.value=True
 
-led_4 = DigitalInOut(board.GP14)
-led_4.direction = Direction.OUTPUT
-led_4.value=True
+led4 = DigitalInOut(board.GP14)
+led4.direction = Direction.OUTPUT
+led4.value=True
 
 ##LED 5 and 6 may change depending on coding in receiving software
-led_5 = DigitalInOut(board.GP8)
-led_5.direction = Direction.OUTPUT
-led_5.value=True
+led5 = DigitalInOut(board.GP8)
+led5.direction = Direction.OUTPUT
+led5.value=True
 
-led_6 = DigitalInOut(board.GP12)
-led_6.direction = Direction.OUTPUT
-led_6.value=True
+led6 = DigitalInOut(board.GP12)
+led6.direction = Direction.OUTPUT
+led6.value=True
 
-led_7 = DigitalInOut(board.GP13)
-led_7.direction = Direction.OUTPUT
-led_7.value=True
+led7 = DigitalInOut(board.GP13)
+led7.direction = Direction.OUTPUT
+led7.value=True
 
-led_8 = DigitalInOut(board.GP7)
-led_8.direction = Direction.OUTPUT
-led_8.value=True
+led8 = DigitalInOut(board.GP7)
+led8.direction = Direction.OUTPUT
+led8.value=True
 
-led_9 = DigitalInOut(board.GP6)
-led_9.direction = Direction.OUTPUT
-led_9.value=True
+led9 = DigitalInOut(board.GP6)
+led9.direction = Direction.OUTPUT
+led9.value=True
 
-##Setting the array
-buttons = [True,True,True,True,True,True]
-leds = [True,True,True,True,True,True,True,True,True]
-led_status = [led_1,led_2,led_3,led_4,led_5,led_6,led_7,led_8,led_9]
+buttons = [btn1,btn2,btn3,btn4,btn5,btn6]
+led_status = [led1,led2,led3,led4,led5,led6,led7,led8,led9]
 
 #Joystick resolution, calculations based on this
 joy_res = 12
@@ -126,14 +124,7 @@ async def send_joystick_position(x, y):
     y = ((y/2**16)*(2**(joy_res+1)))-(2**joy_res) ##Works pretty good
     
     #print(x,y)     ##Debugging print
-    
-    buttons[0] = btn1.value
-    buttons[1] = btn2.value
-    buttons[2] = btn3.value
-    buttons[3] = btn4.value
-    buttons[4] = btn5.value
-    buttons[5] = btn6.value
-        
+            
     ##Joystick and button send array
     data = [0x01, 0x00, 0x01, 0x00, 0xff, 0x00, 0x00, 0x1f] 
 
@@ -180,7 +171,7 @@ async def send_joystick_position(x, y):
     
     #Send canmessage, buttons and joystick
     message = Message(id=id, data=bytes(data), extended=True)
-    #can_bus.send(message)
+    #can_bus.send(message)                                                      ##Comment line to run without can.
     await asyncio.sleep(0.1)    
 
 ##Read analog input, oversamling with middle
@@ -212,16 +203,6 @@ async def read_joystick_position():
         
 ##Listening on bus for filtered messages.
 async def listen_can(listener):
-    led_1.value = leds[0]
-    led_2.value = leds[1]
-    led_3.value = leds[2]
-    led_4.value = leds[3]
-    led_5.value = leds[4]
-    led_6.value = leds[5]
-    led_7.value = leds[6]
-    led_8.value = leds[7]
-    led_9.value = leds[8]
-    
     while True:
         message_count = listener.in_waiting()
         for _i in range(message_count):
@@ -252,8 +233,7 @@ async def main():
          
         await task1
         await task2
-        
-        
+          
 try:
     asyncio.run(main())
 except KeyboardInterrupt:
