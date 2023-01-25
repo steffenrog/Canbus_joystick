@@ -1,11 +1,6 @@
 # SPDX-FileCopyrightText: Copyright (c) 2020 Bryan Siepert for Adafruit Industries
-# 
+#
 # SPDX-License-Identifier: MIT
-
-
-##Edited by Steffen Rogne
-
-
 """
 `adafruit_mcp2515`
 ================================================================================
@@ -198,32 +193,6 @@ _BAUD_RATES = {
         5000: (0x3F, 0xFF, 0x87),
         666000: (0x00, 0xA0, 0x04),
     },
-    
-    
-    12000000: {
-        # CNF1, CNF2, CNF3
-        1000000: (0x00, 0xD0, 0x82),  ##Not correct
-        500000: (0x00, 0x9B, 0x02),
-        250000: (0x02, 0x91, 0x01),
-        200000: (0x01, 0xFA, 0x87),  ##Not correct
-        125000: (0x03, 0xF0, 0x86),  ##Not correct
-        100000: (0x03, 0xFA, 0x87),  ##Not correct
-        95000: (0x03, 0xAD, 0x07),  ##Not correct
-        83300: (0x03, 0xBE, 0x07),  ##Not correct
-        80000: (0x03, 0xFF, 0x87),  ##Not correct
-        50000: (0x07, 0xFA, 0x87),  ##Not correct
-        40000: (0x07, 0xFF, 0x87),  ##Not correct
-        33000: (0x09, 0xBE, 0x07),  ##Not correct
-        31250: (0x0F, 0xF1, 0x85),  ##Not correct
-        25000: (0x0F, 0xBA, 0x07),  ##Not correct
-        20000: (0x0F, 0xFF, 0x87),  ##Not correct
-        10000: (0x1F, 0xFF, 0x87),  ##Not correct
-        5000: (0x3F, 0xFF, 0x87),  ##Not correct
-        666000: (0x00, 0xA0, 0x04),  ##Not correct
-    },
-    
-    
-  
     # Values based on this calculator, for 8MHz, controller MCP2510:
     # https://www.kvaser.com/support/calculators/bit-timing-calculator/
     8000000: {
@@ -267,28 +236,22 @@ def _tx_buffer_status_decode(status_byte):
 
     return out_str
 
-#class CustomMCP2515(adafruit_mcp2515.MCP2515):  # Steffen added implementation to set filter
-#    def set_filter(self, filter_num, filter_id, mask):
-#        """Sets up a filter on the MCP2515."""
-        
-        
+
 class MCP2515:  # pylint:disable=too-many-instance-attributes
     """A common shared-bus protocol."""
+
     def __init__(
         self,
         spi_bus,
         cs_pin,
         *,
         baudrate: int = 500000,
-        crystal_freq: Literal[8000000, 12000000, 16000000] = 12000000,
+        crystal_freq: Literal[8000000, 16000000] = 8000000,
         loopback: bool = False,
         silent: bool = False,
         auto_restart: bool = False,
         debug: bool = False,
     ):
-    
-
-        
         """A common shared-bus protocol.
 
         :param ~busio.SPI spi: The SPI bus used to communicate with the MCP2515
@@ -674,7 +637,7 @@ class MCP2515:  # pylint:disable=too-many-instance-attributes
 
     def _set_baud_rate(self):
         # ******* set baud rate ***********
-        if self._crystal_freq not in (16000000, 12000000, 8000000):
+        if self._crystal_freq not in (16000000, 8000000):
             raise ValueError(
                 f"Incorrect crystal frequency - must be one of: {tuple(_BAUD_RATES.keys())}"
             )
