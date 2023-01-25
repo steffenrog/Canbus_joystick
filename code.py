@@ -150,7 +150,15 @@ async def send_joystick_position(x, y):
         data[6] = data[6] | 0x04
     if not buttons[5]:
         data[6] = data[6] | 0x40
-   
+    
+    ##Button 6 and 4 for configuration - not in current version
+    #if not buttons[4]:
+    #    data[6] = data[6] | 0x04
+    #if data[6] == 0x04:
+    #     data[6] = data[6] | 0x40
+    #     self.config = True
+    #     print("Config...")              ##Debugging prints
+    
     #print(btn1.value, btn2.value, btn3.value, btn4.value) ##Debug print
     
     ##Joystick data send setup
@@ -210,18 +218,33 @@ async def read_joystick_position():
         await send_joystick_position(x, y)
         await asyncio.sleep(0.01)
         
+##Read button states, will be moved.
+# async def read_buttons():
+#     while True:
+#         buttons[0] = btn1.value
+#         buttons[1] = btn2.value
+#         buttons[2] = btn3.value
+#         buttons[3] = btn4.value
+#         buttons[4] = btn5.value
+#         buttons[5] = btn6.value
+#         await asyncio.sleep(0.01)
+
+##Set LEDs, will be moved.        
+async def set_led():
+    while True:
+        led_1.value = leds[0]
+        led_2.value = leds[1]
+        led_3.value = leds[2]
+        led_4.value = leds[3]
+        led_5.value = leds[4]
+        led_6.value = leds[5]
+        led_7.value = leds[6]
+        led_8.value = leds[7]
+        led_9.value = leds[8]
+        await asyncio.sleep(0.01)
+        
 ##Listening on bus for filtered messages.
 async def listen_can(listener):
-    led_1.value = leds[0]
-    led_2.value = leds[1]
-    led_3.value = leds[2]
-    led_4.value = leds[3]
-    led_5.value = leds[4]
-    led_6.value = leds[5]
-    led_7.value = leds[6]
-    led_8.value = leds[7]
-    led_9.value = leds[8]
-    
     while True:
         message_count = listener.in_waiting()
         for _i in range(message_count):
