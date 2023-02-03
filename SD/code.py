@@ -22,6 +22,19 @@
 ##LED PINS ## not connected yet
 #GP6, GP7, GP8, GP9, GP10, GP11, GP12, GP13, GP14#
 
+"""
+This program imports the necessary modules for reading analog joystick inputs, digital button inputs, and sending/receiving data over CANbus.
+
+board - provides access to the hardware on the board.
+analogio - provides an interface for reading analog inputs.
+busio - provides a common interface for communication protocols.
+digitalio - provides an interface for controlling digital inputs and outputs.
+adafruit_mcp2515.canio - provides a message interface for sending and receiving data over CANbus.
+adafruit_mcp2515 - provides a library for accessing the MCP2515 CAN controller.
+asyncio - provides asynchronous I/O support for coroutines.
+struct - provides pack and unpack functions for working with variable-length binary data.
+"""
+
 import board
 import analogio
 import busio
@@ -30,6 +43,18 @@ from adafruit_mcp2515.canio import Message
 from adafruit_mcp2515 import MCP2515 as CAN
 import asyncio
 import struct
+
+"""
+Initializes the digital input/output and bus communication for the joystick inputs and CANbus.
+Define and initialize the inputs for digital buttons and outputs for LEDs on the Pi Pico board.
+cs - a digital input/output for the Chip Select (CS) signal for the CAN controller.
+spi - a bus communication interface using the SPI protocol.
+can_bus - an instance of the MCP2515 CAN controller using the specified spi and cs.
+yaxi - an analog input for the Y-axis of the joystick.
+xaxi - an analog input for the X-axis of the joystick.
+buttons: list of digital inputs for the buttons on the Pi Pico board.
+led_status: list of digital outputs for the LEDs on the Pi Pico board.
+"""
 
 cs = DigitalInOut(board.GP17)
 cs.switch_to_output()
@@ -107,19 +132,37 @@ led_status = [led1,led2,led3,led4,led5,led6,led7,led8,led9]
 #Joystick resolution, calculations based on this
 joy_res = 12
 
+
 ##To use can filters, 2 filters can be used
 class Match:
+    """
+        Class for CAN Message Filtering on the Pi Pico.
+
+        Attributes:
+        address (int): Address of the CAN Message.
+        mask (int): Mask for the CAN Message.
+        extended (bool): True for extended format, False for standard format.
+    """
     def __init__(self,address,mask,extended: bool):
         self.address = address
         self.mask = mask
         self.extended = extended
 
+
 ##Send joystick values, adapted to receiving software. 
 async def send_joystick_position(x, y):
+    """
+        Sends the joystick position and button data over a CAN bus.
+
+        The function takes the `x` and `y` positions of the joystick as arguments. 
+        The ID of the CAN message is set to `0x18fdd6F1` to mimic Grayhill. 
+        The joystick data is converted and scaled to the desired resolution. 
+        The button data is also included in the CAN message as a bitfield. 
+        The CAN message is then sent over the bus, and the function waits for `0.1` seconds before returning.
+    """
     id = 0x18fdd6F1 ##ID mimics Grayhill
     
     ##Joystick calculations
-    #-2048 to 2048
     x = ((x/2**16)*(2**(joy_res+1)))-(2**joy_res) ##Works pretty good 
     y = ((y/2**16)*(2**(joy_res+1)))-(2**joy_res) ##Works pretty good
     
@@ -171,11 +214,21 @@ async def send_joystick_position(x, y):
     
     #Send canmessage, buttons and joystick
     message = Message(id=id, data=bytes(data), extended=True)
-    #can_bus.send(message)                                                      ##Comment line to run without can.
+    can_bus.send(message)                                                      ##Comment line to run without can.
     await asyncio.sleep(0.1)    
+
 
 ##Read analog input, oversamling with middle
 async def read_joystick_position():
+    """
+        Read and send joystick position.
+    
+        This function reads the x and y position of a joystick and sends it through the CAN bus. It takes the median
+        of 2000 samples for x-axis and 10 samples for y-axis to reduce noise. If the joystick is in the deadzone 
+        (distance from center is less than 3000), it is set to the center position. The function runs continuously
+        and sends the joystick position every 0.01 seconds.
+    """
+
     center_x = 32768        
     center_y = 32768
     dead_zone = 3000
@@ -203,6 +256,14 @@ async def read_joystick_position():
         
 ##Listening on bus for filtered messages.
 async def listen_can(listener):
+    """Listens to incoming CAN messages and updates LED status
+
+        Arguments:
+        listener -- the CAN listener object
+
+        This function listens to incoming CAN messages with the specified id and updates the LED status. The LED status is updated by extracting the first byte of the data as the LED key, and the second byte of the data as the LED status. The status is updated by checking if the 4 most significant bits of the second byte are equal to 0.
+
+    """
     while True:
         message_count = listener.in_waiting()
         for _i in range(message_count):
@@ -220,6 +281,15 @@ async def listen_can(listener):
 
 ##setup filters to subscribe
 async def main():
+    """
+        The main function of the program which starts the CAN bus listener and joystick reader tasks.
+
+        This function creates two asynchronous tasks for `listen_can` and `read_joystick_position` functions, which run concurrently in the event loop.
+        Before starting these tasks, it sets up two filters for the CAN bus using the `can_bus.listen` context manager. 
+        The filters are set to match the IDs `0x00ef0002` and `0x666` with mask `0xFF` and `0xFFF` respectively.
+    
+        The function terminates with a "Program closed" message when a KeyboardInterrupt is raised. 
+    """
     matches = [
            Match(0x00ef0002,0xFF,True),         ##Filter 1
            Match(0x666,0xFFF,True),             ##Filter 2

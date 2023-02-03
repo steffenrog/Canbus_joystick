@@ -1,0 +1,320 @@
+\hypertarget{namespacecode}{}\doxysection{code Namespace Reference}
+\label{namespacecode}\index{code@{code}}
+\doxysubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \mbox{\hyperlink{classcode_1_1Match}{Match}}
+\begin{DoxyCompactList}\small\item\em To use can filters, 2 filters can be used. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \mbox{\hyperlink{namespacecode_afd73cb6739e5f02001ac23afbcf50f23}{send\+\_\+joystick\+\_\+position}} (x, y)
+\begin{DoxyCompactList}\small\item\em Send joystick values, adapted to receiving software. \end{DoxyCompactList}\item 
+def \mbox{\hyperlink{namespacecode_a06cf275b486c584c6aa01b2dbc2c0a44}{read\+\_\+joystick\+\_\+position}} ()
+\begin{DoxyCompactList}\small\item\em Read analog input, oversamling with middle. \end{DoxyCompactList}\item 
+def \mbox{\hyperlink{namespacecode_a7d161e08b630030b9c8525bdd280cae9}{listen\+\_\+can}} (listener)
+\begin{DoxyCompactList}\small\item\em Listening on bus for filtered messages. \end{DoxyCompactList}\item 
+def \mbox{\hyperlink{namespacecode_ab4b7b493ce3bcc9f2a53bcb85287127d}{main}} ()
+\begin{DoxyCompactList}\small\item\em setup filters to subscribe \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+Digital\+In\+Out \mbox{\hyperlink{namespacecode_a2a726da5d28f0f36be2b872562eee817}{cs}} = Digital\+In\+Out(board.\+GP17)
+\item 
+busio \mbox{\hyperlink{namespacecode_aca485e9de94693a0d150d4b40c9b3a71}{spi}} = busio.\+SPI(board.\+GP18, board.\+GP19, board.\+GP16)
+\item 
+CAN \mbox{\hyperlink{namespacecode_a8812d1053705c548f43ddd300af94e44}{can\+\_\+bus}} = CAN(\mbox{\hyperlink{namespacecode_aca485e9de94693a0d150d4b40c9b3a71}{spi}}, \mbox{\hyperlink{namespacecode_a2a726da5d28f0f36be2b872562eee817}{cs}})
+\item 
+analogio \mbox{\hyperlink{namespacecode_a7551f0c124389035bb87cfeedfab7905}{yaxi}} = analogio.\+Analog\+In(board.\+GP26\+\_\+\+A0)
+\item 
+analogio \mbox{\hyperlink{namespacecode_a41d4daf5d74fef7d9a6f788c169da22a}{xaxi}} = analogio.\+Analog\+In(board.\+GP27\+\_\+\+A1)
+\item 
+Digital\+In\+Out \mbox{\hyperlink{namespacecode_a18a6a6dafcf07070e16960c5acfb1ef2}{btn1}} = Digital\+In\+Out(board.\+GP2)
+\item 
+\mbox{\hyperlink{namespacecode_aa4f96b739a24e56c05f7555d4ebe3cb0}{direction}}
+\item 
+\mbox{\hyperlink{namespacecode_a2e08e872fec851e6b292cba07f2b2744}{pull}}
+\item 
+Digital\+In\+Out \mbox{\hyperlink{namespacecode_ad028cc25e78a7b62eb5bfba5024abf82}{btn2}} = Digital\+In\+Out(board.\+GP1)
+\item 
+Digital\+In\+Out \mbox{\hyperlink{namespacecode_a2dc70c7ebacd6ff0603e090d062a31bb}{btn3}} = Digital\+In\+Out(board.\+GP0)
+\item 
+Digital\+In\+Out \mbox{\hyperlink{namespacecode_a444164041c9e055404ee9f5135d506c3}{btn4}} = Digital\+In\+Out(board.\+GP5)
+\item 
+Digital\+In\+Out \mbox{\hyperlink{namespacecode_a8df09dd90491cf7d76a04664ab53111c}{btn5}} = Digital\+In\+Out(board.\+GP3)
+\item 
+Digital\+In\+Out \mbox{\hyperlink{namespacecode_a032859e547a737ce35d3c9a45cf399d0}{btn6}} = Digital\+In\+Out(board.\+GP4)
+\item 
+Digital\+In\+Out \mbox{\hyperlink{namespacecode_a7d5d08991f781c1c2f8891265aec75c2}{led1}} = Digital\+In\+Out(board.\+GP11)
+\begin{DoxyCompactList}\small\item\em LED connections. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{namespacecode_ad8a5eacbc8a43c5c9de3f4b5743fd717}{value}}
+\item 
+Digital\+In\+Out \mbox{\hyperlink{namespacecode_a439efc1cb61092e4310d2d8e3853226c}{led2}} = Digital\+In\+Out(board.\+GP10)
+\item 
+Digital\+In\+Out \mbox{\hyperlink{namespacecode_a8ea6e281b0a4c83d3f155c3ab24a0b22}{led3}} = Digital\+In\+Out(board.\+GP9)
+\item 
+Digital\+In\+Out \mbox{\hyperlink{namespacecode_a3949e0bd03f58c6208fa2e01e75f0c18}{led4}} = Digital\+In\+Out(board.\+GP14)
+\item 
+Digital\+In\+Out \mbox{\hyperlink{namespacecode_ad08bf8d5bea9d44f014e78e6cc7a9abd}{led5}} = Digital\+In\+Out(board.\+GP8)
+\begin{DoxyCompactList}\small\item\em LED 5 and 6 may change depending on coding in receiving software. \end{DoxyCompactList}\item 
+Digital\+In\+Out \mbox{\hyperlink{namespacecode_a0c6da487327e4663afd0407c7c7ec4e1}{led6}} = Digital\+In\+Out(board.\+GP12)
+\item 
+Digital\+In\+Out \mbox{\hyperlink{namespacecode_a26c2ce8eececefad34ed3392aa957e68}{led7}} = Digital\+In\+Out(board.\+GP13)
+\item 
+Digital\+In\+Out \mbox{\hyperlink{namespacecode_ad5e9702ff26f4c80b7e85f191ae6fd4f}{led8}} = Digital\+In\+Out(board.\+GP7)
+\item 
+Digital\+In\+Out \mbox{\hyperlink{namespacecode_afc0a71786d55e0a52aead552d42d24cb}{led9}} = Digital\+In\+Out(board.\+GP6)
+\item 
+list \mbox{\hyperlink{namespacecode_abcbca6126081bd781f603becd74faf03}{buttons}} = \mbox{[}\mbox{\hyperlink{namespacecode_a18a6a6dafcf07070e16960c5acfb1ef2}{btn1}},\mbox{\hyperlink{namespacecode_ad028cc25e78a7b62eb5bfba5024abf82}{btn2}},\mbox{\hyperlink{namespacecode_a2dc70c7ebacd6ff0603e090d062a31bb}{btn3}},\mbox{\hyperlink{namespacecode_a444164041c9e055404ee9f5135d506c3}{btn4}},\mbox{\hyperlink{namespacecode_a8df09dd90491cf7d76a04664ab53111c}{btn5}},\mbox{\hyperlink{namespacecode_a032859e547a737ce35d3c9a45cf399d0}{btn6}}\mbox{]}
+\item 
+list \mbox{\hyperlink{namespacecode_a9ebc025956bad280aea0156b9ebb1518}{led\+\_\+status}} = \mbox{[}\mbox{\hyperlink{namespacecode_a7d5d08991f781c1c2f8891265aec75c2}{led1}},\mbox{\hyperlink{namespacecode_a439efc1cb61092e4310d2d8e3853226c}{led2}},\mbox{\hyperlink{namespacecode_a8ea6e281b0a4c83d3f155c3ab24a0b22}{led3}},\mbox{\hyperlink{namespacecode_a3949e0bd03f58c6208fa2e01e75f0c18}{led4}},\mbox{\hyperlink{namespacecode_ad08bf8d5bea9d44f014e78e6cc7a9abd}{led5}},\mbox{\hyperlink{namespacecode_a0c6da487327e4663afd0407c7c7ec4e1}{led6}},\mbox{\hyperlink{namespacecode_a26c2ce8eececefad34ed3392aa957e68}{led7}},\mbox{\hyperlink{namespacecode_ad5e9702ff26f4c80b7e85f191ae6fd4f}{led8}},\mbox{\hyperlink{namespacecode_afc0a71786d55e0a52aead552d42d24cb}{led9}}\mbox{]}
+\item 
+int \mbox{\hyperlink{namespacecode_a4815742012034be00edec533183be636}{joy\+\_\+res}} = 12
+\item 
+\mbox{\hyperlink{namespacecode_a1df4e5b11572bb91ea9d2f0ac1a9d068}{try}} \+:
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{namespacecode_a7d161e08b630030b9c8525bdd280cae9}\label{namespacecode_a7d161e08b630030b9c8525bdd280cae9}} 
+\index{code@{code}!listen\_can@{listen\_can}}
+\index{listen\_can@{listen\_can}!code@{code}}
+\doxysubsubsection{\texorpdfstring{listen\_can()}{listen\_can()}}
+{\footnotesize\ttfamily def code.\+listen\+\_\+can (\begin{DoxyParamCaption}\item[{}]{listener }\end{DoxyParamCaption})}
+
+
+
+Listening on bus for filtered messages. 
+
+\begin{DoxyVerb}Listens to incoming CAN messages and updates LED status
+
+    Arguments:
+    listener -- the CAN listener object
+
+    This function listens to incoming CAN messages with the specified id and updates the LED status. The LED status is updated by extracting the first byte of the data as the LED key, and the second byte of the data as the LED status. The status is updated by checking if the 4 most significant bits of the second byte are equal to 0.\end{DoxyVerb}
+ \mbox{\Hypertarget{namespacecode_ab4b7b493ce3bcc9f2a53bcb85287127d}\label{namespacecode_ab4b7b493ce3bcc9f2a53bcb85287127d}} 
+\index{code@{code}!main@{main}}
+\index{main@{main}!code@{code}}
+\doxysubsubsection{\texorpdfstring{main()}{main()}}
+{\footnotesize\ttfamily def code.\+main (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+setup filters to subscribe 
+
+\begin{DoxyVerb}    The main function of the program which starts the CAN bus listener and joystick reader tasks.
+
+    This function creates two asynchronous tasks for `listen_can` and `read_joystick_position` functions, which run concurrently in the event loop.
+    Before starting these tasks, it sets up two filters for the CAN bus using the `can_bus.listen` context manager. 
+    The filters are set to match the IDs `0x00ef0002` and `0x666` with mask `0xFF` and `0xFFF` respectively.
+
+    The function terminates with a "Program closed" message when a KeyboardInterrupt is raised. 
+\end{DoxyVerb}
+ \mbox{\Hypertarget{namespacecode_a06cf275b486c584c6aa01b2dbc2c0a44}\label{namespacecode_a06cf275b486c584c6aa01b2dbc2c0a44}} 
+\index{code@{code}!read\_joystick\_position@{read\_joystick\_position}}
+\index{read\_joystick\_position@{read\_joystick\_position}!code@{code}}
+\doxysubsubsection{\texorpdfstring{read\_joystick\_position()}{read\_joystick\_position()}}
+{\footnotesize\ttfamily def code.\+read\+\_\+joystick\+\_\+position (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Read analog input, oversamling with middle. 
+
+\begin{DoxyVerb}    Read and send joystick position.
+
+    This function reads the x and y position of a joystick and sends it through the CAN bus. It takes the median
+    of 2000 samples for x-axis and 10 samples for y-axis to reduce noise. If the joystick is in the deadzone 
+    (distance from center is less than 3000), it is set to the center position. The function runs continuously
+    and sends the joystick position every 0.01 seconds.
+\end{DoxyVerb}
+ \mbox{\Hypertarget{namespacecode_afd73cb6739e5f02001ac23afbcf50f23}\label{namespacecode_afd73cb6739e5f02001ac23afbcf50f23}} 
+\index{code@{code}!send\_joystick\_position@{send\_joystick\_position}}
+\index{send\_joystick\_position@{send\_joystick\_position}!code@{code}}
+\doxysubsubsection{\texorpdfstring{send\_joystick\_position()}{send\_joystick\_position()}}
+{\footnotesize\ttfamily def code.\+send\+\_\+joystick\+\_\+position (\begin{DoxyParamCaption}\item[{}]{x,  }\item[{}]{y }\end{DoxyParamCaption})}
+
+
+
+Send joystick values, adapted to receiving software. 
+
+\begin{DoxyVerb}    Sends the joystick position and button data over a CAN bus.
+
+    The function takes the `x` and `y` positions of the joystick as arguments. 
+    The ID of the CAN message is set to `0x18fdd6F1` to mimic Grayhill. 
+    The joystick data is converted and scaled to the desired resolution. 
+    The button data is also included in the CAN message as a bitfield. 
+    The CAN message is then sent over the bus, and the function waits for `0.1` seconds before returning.
+\end{DoxyVerb}
+ 
+
+\doxysubsection{Variable Documentation}
+\mbox{\Hypertarget{namespacecode_a18a6a6dafcf07070e16960c5acfb1ef2}\label{namespacecode_a18a6a6dafcf07070e16960c5acfb1ef2}} 
+\index{code@{code}!btn1@{btn1}}
+\index{btn1@{btn1}!code@{code}}
+\doxysubsubsection{\texorpdfstring{btn1}{btn1}}
+{\footnotesize\ttfamily Digital\+In\+Out code.\+btn1 = Digital\+In\+Out(board.\+GP2)}
+
+\mbox{\Hypertarget{namespacecode_ad028cc25e78a7b62eb5bfba5024abf82}\label{namespacecode_ad028cc25e78a7b62eb5bfba5024abf82}} 
+\index{code@{code}!btn2@{btn2}}
+\index{btn2@{btn2}!code@{code}}
+\doxysubsubsection{\texorpdfstring{btn2}{btn2}}
+{\footnotesize\ttfamily Digital\+In\+Out code.\+btn2 = Digital\+In\+Out(board.\+GP1)}
+
+\mbox{\Hypertarget{namespacecode_a2dc70c7ebacd6ff0603e090d062a31bb}\label{namespacecode_a2dc70c7ebacd6ff0603e090d062a31bb}} 
+\index{code@{code}!btn3@{btn3}}
+\index{btn3@{btn3}!code@{code}}
+\doxysubsubsection{\texorpdfstring{btn3}{btn3}}
+{\footnotesize\ttfamily Digital\+In\+Out code.\+btn3 = Digital\+In\+Out(board.\+GP0)}
+
+\mbox{\Hypertarget{namespacecode_a444164041c9e055404ee9f5135d506c3}\label{namespacecode_a444164041c9e055404ee9f5135d506c3}} 
+\index{code@{code}!btn4@{btn4}}
+\index{btn4@{btn4}!code@{code}}
+\doxysubsubsection{\texorpdfstring{btn4}{btn4}}
+{\footnotesize\ttfamily Digital\+In\+Out code.\+btn4 = Digital\+In\+Out(board.\+GP5)}
+
+\mbox{\Hypertarget{namespacecode_a8df09dd90491cf7d76a04664ab53111c}\label{namespacecode_a8df09dd90491cf7d76a04664ab53111c}} 
+\index{code@{code}!btn5@{btn5}}
+\index{btn5@{btn5}!code@{code}}
+\doxysubsubsection{\texorpdfstring{btn5}{btn5}}
+{\footnotesize\ttfamily Digital\+In\+Out code.\+btn5 = Digital\+In\+Out(board.\+GP3)}
+
+\mbox{\Hypertarget{namespacecode_a032859e547a737ce35d3c9a45cf399d0}\label{namespacecode_a032859e547a737ce35d3c9a45cf399d0}} 
+\index{code@{code}!btn6@{btn6}}
+\index{btn6@{btn6}!code@{code}}
+\doxysubsubsection{\texorpdfstring{btn6}{btn6}}
+{\footnotesize\ttfamily Digital\+In\+Out code.\+btn6 = Digital\+In\+Out(board.\+GP4)}
+
+\mbox{\Hypertarget{namespacecode_abcbca6126081bd781f603becd74faf03}\label{namespacecode_abcbca6126081bd781f603becd74faf03}} 
+\index{code@{code}!buttons@{buttons}}
+\index{buttons@{buttons}!code@{code}}
+\doxysubsubsection{\texorpdfstring{buttons}{buttons}}
+{\footnotesize\ttfamily list code.\+buttons = \mbox{[}\mbox{\hyperlink{namespacecode_a18a6a6dafcf07070e16960c5acfb1ef2}{btn1}},\mbox{\hyperlink{namespacecode_ad028cc25e78a7b62eb5bfba5024abf82}{btn2}},\mbox{\hyperlink{namespacecode_a2dc70c7ebacd6ff0603e090d062a31bb}{btn3}},\mbox{\hyperlink{namespacecode_a444164041c9e055404ee9f5135d506c3}{btn4}},\mbox{\hyperlink{namespacecode_a8df09dd90491cf7d76a04664ab53111c}{btn5}},\mbox{\hyperlink{namespacecode_a032859e547a737ce35d3c9a45cf399d0}{btn6}}\mbox{]}}
+
+\mbox{\Hypertarget{namespacecode_a8812d1053705c548f43ddd300af94e44}\label{namespacecode_a8812d1053705c548f43ddd300af94e44}} 
+\index{code@{code}!can\_bus@{can\_bus}}
+\index{can\_bus@{can\_bus}!code@{code}}
+\doxysubsubsection{\texorpdfstring{can\_bus}{can\_bus}}
+{\footnotesize\ttfamily CAN code.\+can\+\_\+bus = CAN(\mbox{\hyperlink{namespacecode_aca485e9de94693a0d150d4b40c9b3a71}{spi}}, \mbox{\hyperlink{namespacecode_a2a726da5d28f0f36be2b872562eee817}{cs}})}
+
+\mbox{\Hypertarget{namespacecode_a2a726da5d28f0f36be2b872562eee817}\label{namespacecode_a2a726da5d28f0f36be2b872562eee817}} 
+\index{code@{code}!cs@{cs}}
+\index{cs@{cs}!code@{code}}
+\doxysubsubsection{\texorpdfstring{cs}{cs}}
+{\footnotesize\ttfamily Digital\+In\+Out code.\+cs = Digital\+In\+Out(board.\+GP17)}
+
+\mbox{\Hypertarget{namespacecode_aa4f96b739a24e56c05f7555d4ebe3cb0}\label{namespacecode_aa4f96b739a24e56c05f7555d4ebe3cb0}} 
+\index{code@{code}!direction@{direction}}
+\index{direction@{direction}!code@{code}}
+\doxysubsubsection{\texorpdfstring{direction}{direction}}
+{\footnotesize\ttfamily code.\+direction}
+
+\mbox{\Hypertarget{namespacecode_a4815742012034be00edec533183be636}\label{namespacecode_a4815742012034be00edec533183be636}} 
+\index{code@{code}!joy\_res@{joy\_res}}
+\index{joy\_res@{joy\_res}!code@{code}}
+\doxysubsubsection{\texorpdfstring{joy\_res}{joy\_res}}
+{\footnotesize\ttfamily int code.\+joy\+\_\+res = 12}
+
+\mbox{\Hypertarget{namespacecode_a7d5d08991f781c1c2f8891265aec75c2}\label{namespacecode_a7d5d08991f781c1c2f8891265aec75c2}} 
+\index{code@{code}!led1@{led1}}
+\index{led1@{led1}!code@{code}}
+\doxysubsubsection{\texorpdfstring{led1}{led1}}
+{\footnotesize\ttfamily Digital\+In\+Out code.\+led1 = Digital\+In\+Out(board.\+GP11)}
+
+
+
+LED connections. 
+
+\mbox{\Hypertarget{namespacecode_a439efc1cb61092e4310d2d8e3853226c}\label{namespacecode_a439efc1cb61092e4310d2d8e3853226c}} 
+\index{code@{code}!led2@{led2}}
+\index{led2@{led2}!code@{code}}
+\doxysubsubsection{\texorpdfstring{led2}{led2}}
+{\footnotesize\ttfamily Digital\+In\+Out code.\+led2 = Digital\+In\+Out(board.\+GP10)}
+
+\mbox{\Hypertarget{namespacecode_a8ea6e281b0a4c83d3f155c3ab24a0b22}\label{namespacecode_a8ea6e281b0a4c83d3f155c3ab24a0b22}} 
+\index{code@{code}!led3@{led3}}
+\index{led3@{led3}!code@{code}}
+\doxysubsubsection{\texorpdfstring{led3}{led3}}
+{\footnotesize\ttfamily Digital\+In\+Out code.\+led3 = Digital\+In\+Out(board.\+GP9)}
+
+\mbox{\Hypertarget{namespacecode_a3949e0bd03f58c6208fa2e01e75f0c18}\label{namespacecode_a3949e0bd03f58c6208fa2e01e75f0c18}} 
+\index{code@{code}!led4@{led4}}
+\index{led4@{led4}!code@{code}}
+\doxysubsubsection{\texorpdfstring{led4}{led4}}
+{\footnotesize\ttfamily Digital\+In\+Out code.\+led4 = Digital\+In\+Out(board.\+GP14)}
+
+\mbox{\Hypertarget{namespacecode_ad08bf8d5bea9d44f014e78e6cc7a9abd}\label{namespacecode_ad08bf8d5bea9d44f014e78e6cc7a9abd}} 
+\index{code@{code}!led5@{led5}}
+\index{led5@{led5}!code@{code}}
+\doxysubsubsection{\texorpdfstring{led5}{led5}}
+{\footnotesize\ttfamily Digital\+In\+Out code.\+led5 = Digital\+In\+Out(board.\+GP8)}
+
+
+
+LED 5 and 6 may change depending on coding in receiving software. 
+
+\mbox{\Hypertarget{namespacecode_a0c6da487327e4663afd0407c7c7ec4e1}\label{namespacecode_a0c6da487327e4663afd0407c7c7ec4e1}} 
+\index{code@{code}!led6@{led6}}
+\index{led6@{led6}!code@{code}}
+\doxysubsubsection{\texorpdfstring{led6}{led6}}
+{\footnotesize\ttfamily Digital\+In\+Out code.\+led6 = Digital\+In\+Out(board.\+GP12)}
+
+\mbox{\Hypertarget{namespacecode_a26c2ce8eececefad34ed3392aa957e68}\label{namespacecode_a26c2ce8eececefad34ed3392aa957e68}} 
+\index{code@{code}!led7@{led7}}
+\index{led7@{led7}!code@{code}}
+\doxysubsubsection{\texorpdfstring{led7}{led7}}
+{\footnotesize\ttfamily Digital\+In\+Out code.\+led7 = Digital\+In\+Out(board.\+GP13)}
+
+\mbox{\Hypertarget{namespacecode_ad5e9702ff26f4c80b7e85f191ae6fd4f}\label{namespacecode_ad5e9702ff26f4c80b7e85f191ae6fd4f}} 
+\index{code@{code}!led8@{led8}}
+\index{led8@{led8}!code@{code}}
+\doxysubsubsection{\texorpdfstring{led8}{led8}}
+{\footnotesize\ttfamily Digital\+In\+Out code.\+led8 = Digital\+In\+Out(board.\+GP7)}
+
+\mbox{\Hypertarget{namespacecode_afc0a71786d55e0a52aead552d42d24cb}\label{namespacecode_afc0a71786d55e0a52aead552d42d24cb}} 
+\index{code@{code}!led9@{led9}}
+\index{led9@{led9}!code@{code}}
+\doxysubsubsection{\texorpdfstring{led9}{led9}}
+{\footnotesize\ttfamily Digital\+In\+Out code.\+led9 = Digital\+In\+Out(board.\+GP6)}
+
+\mbox{\Hypertarget{namespacecode_a9ebc025956bad280aea0156b9ebb1518}\label{namespacecode_a9ebc025956bad280aea0156b9ebb1518}} 
+\index{code@{code}!led\_status@{led\_status}}
+\index{led\_status@{led\_status}!code@{code}}
+\doxysubsubsection{\texorpdfstring{led\_status}{led\_status}}
+{\footnotesize\ttfamily list code.\+led\+\_\+status = \mbox{[}\mbox{\hyperlink{namespacecode_a7d5d08991f781c1c2f8891265aec75c2}{led1}},\mbox{\hyperlink{namespacecode_a439efc1cb61092e4310d2d8e3853226c}{led2}},\mbox{\hyperlink{namespacecode_a8ea6e281b0a4c83d3f155c3ab24a0b22}{led3}},\mbox{\hyperlink{namespacecode_a3949e0bd03f58c6208fa2e01e75f0c18}{led4}},\mbox{\hyperlink{namespacecode_ad08bf8d5bea9d44f014e78e6cc7a9abd}{led5}},\mbox{\hyperlink{namespacecode_a0c6da487327e4663afd0407c7c7ec4e1}{led6}},\mbox{\hyperlink{namespacecode_a26c2ce8eececefad34ed3392aa957e68}{led7}},\mbox{\hyperlink{namespacecode_ad5e9702ff26f4c80b7e85f191ae6fd4f}{led8}},\mbox{\hyperlink{namespacecode_afc0a71786d55e0a52aead552d42d24cb}{led9}}\mbox{]}}
+
+\mbox{\Hypertarget{namespacecode_a2e08e872fec851e6b292cba07f2b2744}\label{namespacecode_a2e08e872fec851e6b292cba07f2b2744}} 
+\index{code@{code}!pull@{pull}}
+\index{pull@{pull}!code@{code}}
+\doxysubsubsection{\texorpdfstring{pull}{pull}}
+{\footnotesize\ttfamily code.\+pull}
+
+\mbox{\Hypertarget{namespacecode_aca485e9de94693a0d150d4b40c9b3a71}\label{namespacecode_aca485e9de94693a0d150d4b40c9b3a71}} 
+\index{code@{code}!spi@{spi}}
+\index{spi@{spi}!code@{code}}
+\doxysubsubsection{\texorpdfstring{spi}{spi}}
+{\footnotesize\ttfamily busio code.\+spi = busio.\+SPI(board.\+GP18, board.\+GP19, board.\+GP16)}
+
+\mbox{\Hypertarget{namespacecode_a1df4e5b11572bb91ea9d2f0ac1a9d068}\label{namespacecode_a1df4e5b11572bb91ea9d2f0ac1a9d068}} 
+\index{code@{code}!try@{try}}
+\index{try@{try}!code@{code}}
+\doxysubsubsection{\texorpdfstring{try}{try}}
+{\footnotesize\ttfamily code.\+try \+:}
+
+\mbox{\Hypertarget{namespacecode_ad8a5eacbc8a43c5c9de3f4b5743fd717}\label{namespacecode_ad8a5eacbc8a43c5c9de3f4b5743fd717}} 
+\index{code@{code}!value@{value}}
+\index{value@{value}!code@{code}}
+\doxysubsubsection{\texorpdfstring{value}{value}}
+{\footnotesize\ttfamily code.\+value}
+
+\mbox{\Hypertarget{namespacecode_a41d4daf5d74fef7d9a6f788c169da22a}\label{namespacecode_a41d4daf5d74fef7d9a6f788c169da22a}} 
+\index{code@{code}!xaxi@{xaxi}}
+\index{xaxi@{xaxi}!code@{code}}
+\doxysubsubsection{\texorpdfstring{xaxi}{xaxi}}
+{\footnotesize\ttfamily analogio code.\+xaxi = analogio.\+Analog\+In(board.\+GP27\+\_\+\+A1)}
+
+\mbox{\Hypertarget{namespacecode_a7551f0c124389035bb87cfeedfab7905}\label{namespacecode_a7551f0c124389035bb87cfeedfab7905}} 
+\index{code@{code}!yaxi@{yaxi}}
+\index{yaxi@{yaxi}!code@{code}}
+\doxysubsubsection{\texorpdfstring{yaxi}{yaxi}}
+{\footnotesize\ttfamily analogio code.\+yaxi = analogio.\+Analog\+In(board.\+GP26\+\_\+\+A0)}
+
