@@ -1,5 +1,6 @@
 # Author: Steffen Rogne
-# Brief:  Test software, read canbus with filter. Read Analog Joystick, send joystick values over can.
+# Brief:  Joystick handler for SeaDrive software. 
+# Read canbus with filter, and sets LED states. Read Analog Joystick, and button states send states over can.
 # 
 #==================================================
 #
@@ -12,6 +13,7 @@
 # GND   - Pin 38
 # 3v3 Out - Pin 36
 # LED Out - Pin 34(GP 28)
+# Interrupt is not in use
 #
 ##JOYSTICK PINS
 #GP26_A0, GP27_A1#
@@ -23,16 +25,17 @@
 #GP6, GP7, GP8, GP9, GP10, GP11, GP12, GP13, GP14#
 
 """
-This program imports the necessary modules for reading analog joystick inputs, digital button inputs, and sending/receiving data over CANbus.
+This program imports the necessary modules for reading analog joystick inputs, 
+digital button inputs, and sending/receiving data over CANbus.
 
-board - provides access to the hardware on the board.
-analogio - provides an interface for reading analog inputs.
-busio - provides a common interface for communication protocols.
-digitalio - provides an interface for controlling digital inputs and outputs.
-adafruit_mcp2515.canio - provides a message interface for sending and receiving data over CANbus.
-adafruit_mcp2515 - provides a library for accessing the MCP2515 CAN controller.
-asyncio - provides asynchronous I/O support for coroutines.
-struct - provides pack and unpack functions for working with variable-length binary data.
+board       - provides access to the hardware on the board.
+analogio    - provides an interface for reading analog inputs.
+busio       - provides a common interface for communication protocols.
+digitalio   - provides an interface for controlling digital inputs and outputs.
+adafruit_mcp2515.canio  - provides a message interface for sending and receiving data over CANbus.
+adafruit_mcp2515        - provides a library for accessing the MCP2515 CAN controller.
+asyncio     - provides asynchronous I/O support for coroutines.
+struct      - provides pack and unpack functions for working with variable-length binary data.
 """
 
 import board
@@ -47,11 +50,11 @@ import struct
 """
 Initializes the digital input/output and bus communication for the joystick inputs and CANbus.
 Define and initialize the inputs for digital buttons and outputs for LEDs on the Pi Pico board.
-cs - a digital input/output for the Chip Select (CS) signal for the CAN controller.
-spi - a bus communication interface using the SPI protocol.
+cs      - a digital input/output for the Chip Select (CS) signal for the CAN controller.
+spi     - a bus communication interface using the SPI protocol.
 can_bus - an instance of the MCP2515 CAN controller using the specified spi and cs.
-yaxi - an analog input for the Y-axis of the joystick.
-xaxi - an analog input for the X-axis of the joystick.
+yaxi    - an analog input for the Y-axis of the joystick.
+xaxi    - an analog input for the X-axis of the joystick.
 buttons: list of digital inputs for the buttons on the Pi Pico board.
 led_status: list of digital outputs for the LEDs on the Pi Pico board.
 """
@@ -137,7 +140,6 @@ joy_res = 12
 class Match:
     """
         Class for CAN Message Filtering on the Pi Pico.
-
         Attributes:
         address (int): Address of the CAN Message.
         mask (int): Mask for the CAN Message.
@@ -160,6 +162,7 @@ async def send_joystick_position(x, y):
         The button data is also included in the CAN message as a bitfield. 
         The CAN message is then sent over the bus, and the function waits for `0.1` seconds before returning.
     """
+
     id = 0x18fdd6F1 ##ID mimics Grayhill
     
     ##Joystick calculations
@@ -257,12 +260,12 @@ async def read_joystick_position():
 ##Listening on bus for filtered messages.
 async def listen_can(listener):
     """Listens to incoming CAN messages and updates LED status
-
         Arguments:
         listener -- the CAN listener object
-
-        This function listens to incoming CAN messages with the specified id and updates the LED status. The LED status is updated by extracting the first byte of the data as the LED key, and the second byte of the data as the LED status. The status is updated by checking if the 4 most significant bits of the second byte are equal to 0.
-
+        This function listens to incoming CAN messages with the specified id and updates the LED status. 
+        The LED status is updated by extracting the first byte of the data as the LED key, 
+        and the second byte of the data as the LED status. 
+        The status is updated by checking if the 4 most significant bits of the second byte are equal to 0.
     """
     while True:
         message_count = listener.in_waiting()
@@ -283,11 +286,10 @@ async def listen_can(listener):
 async def main():
     """
         The main function of the program which starts the CAN bus listener and joystick reader tasks.
-
-        This function creates two asynchronous tasks for `listen_can` and `read_joystick_position` functions, which run concurrently in the event loop.
+        This function creates two asynchronous tasks for `listen_can` and `read_joystick_position` functions, 
+        which run concurrently in the event loop.
         Before starting these tasks, it sets up two filters for the CAN bus using the `can_bus.listen` context manager. 
         The filters are set to match the IDs `0x00ef0002` and `0x666` with mask `0xFF` and `0xFFF` respectively.
-    
         The function terminates with a "Program closed" message when a KeyboardInterrupt is raised. 
     """
     matches = [
