@@ -150,9 +150,6 @@ async def send_joystick_position(x, y):
         data (list): The data array that forms the content of the CAN message.
         message (Message): The constructed CAN message.
 
-    Returns:
-        None
-
     Modifies:
         Sends a CAN message through the CAN bus.
     """
@@ -220,9 +217,6 @@ async def read_joystick_position():
     Description:
         This code runs an asynchronous function to read the joystick position.
 
-    Args:
-        None
-
     Attributes:
         center_x: An integer representing the center position of the joystick along the x-axis.
         center_y: An integer representing the center position of the joystick along the y-axis.
@@ -231,9 +225,6 @@ async def read_joystick_position():
         y_list: A list of integers representing the y-axis readings from the joystick.
         x: An integer representing the filtered x-axis reading from the joystick.
         y: An integer representing the filtered y-axis reading from the joystick.
-
-    Returns:
-        None
 
     Modifies:
         Sends the filtered x and y positions of the joystick to another function 'send_joystick_position'.
@@ -278,9 +269,6 @@ async def listen_can(listener):
         k: An integer representing the index of the LED status.
         c: An integer representing the status of the LED.
 
-    Returns:
-        None
-
     Modifies:
         Updates the LED status in the 'led_status' list based on the incoming CAN bus messages.
     """
@@ -305,16 +293,10 @@ async def main():
     Description:
         This code runs a main asynchronous function to listen on a CAN bus and read the joystick position.
 
-    Args:
-        None
-
     Attributes:
         matches: A list of Match objects, representing filters for the CAN bus.
         task1: An asynchronous task to listen on the CAN bus using the listener.
         task2: An asynchronous task to read the joystick position.
-
-    Returns:
-        None
 
     Modifies:
         Starts the task1 and task2 to listen on the CAN bus and read the joystick position.
