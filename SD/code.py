@@ -42,7 +42,7 @@ import board
 import analogio
 import busio
 from digitalio import DigitalInOut, Direction, Pull
-from adafruit_mcp2515.canio import Message
+from adafruit_mcp2515.canio import Message, Match
 from adafruit_mcp2515 import MCP2515 as CAN
 import asyncio
 import struct
@@ -135,17 +135,27 @@ led_status = [led1,led2,led3,led4,led5,led6,led7,led8,led9]
 #Joystick resolution, calculations based on this
 joy_res = 12
 
-
-##To use can filters, 2 filters can be used
-class Match:
-    def __init__(self,address,mask,extended: bool):
-        self.address = address
-        self.mask = mask
-        self.extended = extended
-
-
 ##Send joystick values, adapted to receiving software. 
 async def send_joystick_position(x, y):
+    """
+    Description:
+    This function sends the joystick position by constructing a CAN message and sending it through the CAN bus.
+
+    Args:
+        x (int): The x-coordinate of the joystick position.
+        y (int): The y-coordinate of the joystick position.
+
+    Attributes:
+        id (int): The ID of the CAN message.
+        data (list): The data array that forms the content of the CAN message.
+        message (Message): The constructed CAN message.
+
+    Returns:
+        None
+
+    Modifies:
+        Sends a CAN message through the CAN bus.
+    """
     id = 0x18fdd6F1 #ID mimics Grayhill
     
     ##Joystick calculations
@@ -206,6 +216,28 @@ async def send_joystick_position(x, y):
 
 ##Read analog input, oversamling with middle
 async def read_joystick_position():
+    """
+    Description:
+        This code runs an asynchronous function to read the joystick position.
+
+    Args:
+        None
+
+    Attributes:
+        center_x: An integer representing the center position of the joystick along the x-axis.
+        center_y: An integer representing the center position of the joystick along the y-axis.
+        dead_zone: An integer representing the range around the center position where the joystick is considered to be in the neutral position.
+        x_list: A list of integers representing the x-axis readings from the joystick.
+        y_list: A list of integers representing the y-axis readings from the joystick.
+        x: An integer representing the filtered x-axis reading from the joystick.
+        y: An integer representing the filtered y-axis reading from the joystick.
+
+    Returns:
+        None
+
+    Modifies:
+        Sends the filtered x and y positions of the joystick to another function 'send_joystick_position'.
+    """
     center_x = 32768        
     center_y = 32768
     dead_zone = 3000
@@ -233,6 +265,25 @@ async def read_joystick_position():
         
 #Listening on bus for filtered messages.
 async def listen_can(listener):
+    """
+    Description:
+        This code runs an asynchronous function to listen on the CAN bus for incoming messages.
+
+    Args:
+        listener: A listener object to listen on the CAN bus.
+
+    Attributes:
+        message_count: An integer representing the number of incoming messages.
+        msg: An incoming message from the CAN bus.
+        k: An integer representing the index of the LED status.
+        c: An integer representing the status of the LED.
+
+    Returns:
+        None
+
+    Modifies:
+        Updates the LED status in the 'led_status' list based on the incoming CAN bus messages.
+    """
     while True:
         message_count = listener.in_waiting()
         for _i in range(message_count):
@@ -248,8 +299,26 @@ async def listen_can(listener):
               
         await asyncio.sleep(0.01)
 
-##setup filters to subscribe
+##Starting main, setup filters to subscribe
 async def main():
+    """
+    Description:
+        This code runs a main asynchronous function to listen on a CAN bus and read the joystick position.
+
+    Args:
+        None
+
+    Attributes:
+        matches: A list of Match objects, representing filters for the CAN bus.
+        task1: An asynchronous task to listen on the CAN bus using the listener.
+        task2: An asynchronous task to read the joystick position.
+
+    Returns:
+        None
+
+    Modifies:
+        Starts the task1 and task2 to listen on the CAN bus and read the joystick position.
+    """
     matches = [
            Match(0x00ef0002,0xFF,True),         ##Filter 1
            Match(0x666,0xFFF,True),             ##Filter 2
@@ -258,7 +327,7 @@ async def main():
     with can_bus.listen(matches) as listener:
         task1 = asyncio.create_task(listen_can(listener))
         print("Starting can filters......") 
-        task2 = asyncio.create_task(read_joystick_position())
+        task2 = asyncio.create_task(read_joystick_position())       
         print("Reading joystick......")    
          
         await task1
