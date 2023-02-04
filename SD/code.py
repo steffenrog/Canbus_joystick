@@ -5,7 +5,7 @@
 #==================================================
 #
 #
-##RS485 PINS
+#RS485 PINS
 # MISO  - Pin 21 (GP16)
 # CS    - Pin 22 (GP17)
 # SCK   - Pin 24 (GP18)
@@ -15,13 +15,13 @@
 # LED Out - Pin 34(GP 28)
 # Interrupt is not in use
 #
-##JOYSTICK PINS
+#JOYSTICK PINS
 #GP26_A0, GP27_A1#
 #
-##BUTTON PINS
+#BUTTON PINS
 #GP0, GP1, GP2, GP3, GP4, GP5#
 #
-##LED PINS ## not connected yet
+#LED PINS #
 #GP6, GP7, GP8, GP9, GP10, GP11, GP12, GP13, GP14#
 
 """
@@ -67,6 +67,7 @@ can_bus = CAN(spi, cs)
 yaxi = analogio.AnalogIn(board.GP26_A0)
 xaxi = analogio.AnalogIn(board.GP27_A1)
 
+##Button connections
 btn1 = DigitalInOut(board.GP2)
 btn1.direction = Direction.INPUT
 btn1.pull = Pull.UP
@@ -108,7 +109,6 @@ led4 = DigitalInOut(board.GP14)
 led4.direction = Direction.OUTPUT
 led4.value=True
 
-##LED 5 and 6 may change depending on coding in receiving software
 led5 = DigitalInOut(board.GP8)
 led5.direction = Direction.OUTPUT
 led5.value=True
@@ -138,13 +138,6 @@ joy_res = 12
 
 ##To use can filters, 2 filters can be used
 class Match:
-    """
-        Class for CAN Message Filtering on the Pi Pico.
-        Attributes:
-        address (int): Address of the CAN Message.
-        mask (int): Mask for the CAN Message.
-        extended (bool): True for extended format, False for standard format.
-    """
     def __init__(self,address,mask,extended: bool):
         self.address = address
         self.mask = mask
@@ -153,23 +146,13 @@ class Match:
 
 ##Send joystick values, adapted to receiving software. 
 async def send_joystick_position(x, y):
-    """
-        Sends the joystick position and button data over a CAN bus.
-
-        The function takes the `x` and `y` positions of the joystick as arguments. 
-        The ID of the CAN message is set to `0x18fdd6F1` to mimic Grayhill. 
-        The joystick data is converted and scaled to the desired resolution. 
-        The button data is also included in the CAN message as a bitfield. 
-        The CAN message is then sent over the bus, and the function waits for `0.1` seconds before returning.
-    """
-
-    id = 0x18fdd6F1 ##ID mimics Grayhill
+    id = 0x18fdd6F1 #ID mimics Grayhill
     
     ##Joystick calculations
-    x = ((x/2**16)*(2**(joy_res+1)))-(2**joy_res) ##Works pretty good 
-    y = ((y/2**16)*(2**(joy_res+1)))-(2**joy_res) ##Works pretty good
+    x = ((x/2**16)*(2**(joy_res+1)))-(2**joy_res) #Works pretty good 
+    y = ((y/2**16)*(2**(joy_res+1)))-(2**joy_res) #Works pretty good
     
-    #print(x,y)     ##Debugging print
+    #print(x,y)     #Debugging print
             
     ##Joystick and button send array
     data = [0x01, 0x00, 0x01, 0x00, 0xff, 0x00, 0x00, 0x1f] 
@@ -188,7 +171,7 @@ async def send_joystick_position(x, y):
     if not buttons[5]:
         data[6] = data[6] | 0x40
    
-    #print(btn1.value, btn2.value, btn3.value, btn4.value) ##Debug print
+    #print(btn1.value, btn2.value, btn3.value, btn4.value) #Debug print
     
     ##Joystick data send setup
     if joy_res == 12:
@@ -213,25 +196,16 @@ async def send_joystick_position(x, y):
     data[2] = data[2] | (tmp[0] & 0x0c)          
     data[3] = tmp[1]                            
     
-    print(bytes(data))  ##Debugging print
+    print(bytes(data))  #Debugging print
     
     #Send canmessage, buttons and joystick
     message = Message(id=id, data=bytes(data), extended=True)
-    can_bus.send(message)                                                      ##Comment line to run without can.
+    can_bus.send(message)                                                     #Comment line to run without can.
     await asyncio.sleep(0.1)    
 
 
 ##Read analog input, oversamling with middle
 async def read_joystick_position():
-    """
-        Read and send joystick position.
-    
-        This function reads the x and y position of a joystick and sends it through the CAN bus. It takes the median
-        of 2000 samples for x-axis and 10 samples for y-axis to reduce noise. If the joystick is in the deadzone 
-        (distance from center is less than 3000), it is set to the center position. The function runs continuously
-        and sends the joystick position every 0.01 seconds.
-    """
-
     center_x = 32768        
     center_y = 32768
     dead_zone = 3000
@@ -252,27 +226,19 @@ async def read_joystick_position():
         if abs(y - center_y) < dead_zone:
             y = center_y
             
-        #print(x,y)     ##Debugging print
+        #print(x,y)     #Debugging print
       
         await send_joystick_position(x, y)
         await asyncio.sleep(0.01)
         
-##Listening on bus for filtered messages.
+#Listening on bus for filtered messages.
 async def listen_can(listener):
-    """Listens to incoming CAN messages and updates LED status
-        Arguments:
-        listener -- the CAN listener object
-        This function listens to incoming CAN messages with the specified id and updates the LED status. 
-        The LED status is updated by extracting the first byte of the data as the LED key, 
-        and the second byte of the data as the LED status. 
-        The status is updated by checking if the 4 most significant bits of the second byte are equal to 0.
-    """
     while True:
         message_count = listener.in_waiting()
         for _i in range(message_count):
             msg = listener.receive()
             
-            #print("Message from: ", hex(msg.id))   ##Debugging print
+            #print("Message from: ", hex(msg.id))   #Debugging print
             #print(msg.data)
             
             if msg.id == 0x18eff102:
@@ -284,14 +250,6 @@ async def listen_can(listener):
 
 ##setup filters to subscribe
 async def main():
-    """
-        The main function of the program which starts the CAN bus listener and joystick reader tasks.
-        This function creates two asynchronous tasks for `listen_can` and `read_joystick_position` functions, 
-        which run concurrently in the event loop.
-        Before starting these tasks, it sets up two filters for the CAN bus using the `can_bus.listen` context manager. 
-        The filters are set to match the IDs `0x00ef0002` and `0x666` with mask `0xFF` and `0xFFF` respectively.
-        The function terminates with a "Program closed" message when a KeyboardInterrupt is raised. 
-    """
     matches = [
            Match(0x00ef0002,0xFF,True),         ##Filter 1
            Match(0x666,0xFFF,True),             ##Filter 2
