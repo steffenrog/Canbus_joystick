@@ -171,21 +171,21 @@ async def read_joystick_position():
     """
     center_x = 32768        
     center_y = 32768
-    dead_zone = 3000
+    dead_zone = 650
     
     while True:
         x_list = []
         y_list = []
-        for i in range(2000):
+        for i in range(200):
             x_list.append(xaxi.value)
             #x_list.append(65536 - xaxi.value)   #inverted - if Joystick is attached upside down        
-        for i in range(10):
+        for i in range(200):
             y_list.append(yaxi.value)
             #y_list.append(65536 - yaxi.value)   #inverted - if Joystick is attached upside down
         x_list.sort()
         y_list.sort()
-        x = x_list[1000]
-        y = y_list[5]
+        x = x_list[100]
+        y = y_list[100]
         if abs(x - center_x) < dead_zone:
             x = center_x
         if abs(y - center_y) < dead_zone:
