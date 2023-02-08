@@ -1,8 +1,6 @@
 var searchData=
 [
-  ['read_5fjoystick_5fposition_0',['read_joystick_position',['../namespacecode.html#a06cf275b486c584c6aa01b2dbc2c0a44',1,'code']]],
-  ['receive_1',['receive',['../classadafruit__mcp2515_1_1canio_1_1Listener.html#a787f78bb6bb5d4051647ba147f54b524',1,'adafruit_mcp2515::canio::Listener']]],
-  ['receivebuffer_2',['ReceiveBuffer',['../namespaceadafruit__mcp2515.html#a877ee24df25c6085bc77a908f3804cf0',1,'adafruit_mcp2515']]],
-  ['remotetransmissionrequest_3',['RemoteTransmissionRequest',['../classadafruit__mcp2515_1_1canio_1_1RemoteTransmissionRequest.html',1,'adafruit_mcp2515::canio']]],
-  ['rewind_5fto_4',['rewind_to',['../classadafruit__mcp2515_1_1timer_1_1Timer.html#a0e121b636c01f69d1493f3fc13115af7',1,'adafruit_mcp2515::timer::Timer']]]
+  ['send_5fjoystick_5fposition_0',['send_joystick_position',['../namespacecode__1.html#a48900754f04ced945dc83f4855273035',1,'code_1']]],
+  ['spi_1',['spi',['../namespacecode__1.html#ad4947f410680789cd1ea4436bc97dad4',1,'code_1']]],
+  ['stdid_5fbottom_5f11_5fmask_2',['STDID_BOTTOM_11_MASK',['../namespaceadafruit__mcp2515.html#aeda2d190c19485528581ee7b81be8254',1,'adafruit_mcp2515']]]
 ];

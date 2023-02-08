@@ -1,5 +1,6 @@
 var searchData=
 [
-  ['spi_0',['spi',['../namespacecode.html#aca485e9de94693a0d150d4b40c9b3a71',1,'code']]],
-  ['stdid_5fbottom_5f11_5fmask_1',['STDID_BOTTOM_11_MASK',['../namespaceadafruit__mcp2515.html#aeda2d190c19485528581ee7b81be8254',1,'adafruit_mcp2515']]]
+  ['timeout_0',['timeout',['../classadafruit__mcp2515_1_1canio_1_1Listener.html#a958749d8f3acd6258db3fded888cd156',1,'adafruit_mcp2515::canio::Listener']]],
+  ['transmitbuffer_1',['TransmitBuffer',['../namespaceadafruit__mcp2515.html#a3ad27e0212e60dd9c33b8fd853f53c5b',1,'adafruit_mcp2515']]],
+  ['try_2',['try',['../namespacecode__1.html#ac615e42226d46b25774ab9473cb28860',1,'code_1.try()'],['../namespaceadafruit__mcp2515.html#a8a9d890ff2f99801e90fd8ffec63a881',1,'adafruit_mcp2515.try()'],['../namespaceadafruit__ticks.html#a53d46423e33b24d97842ae215eea7eab',1,'adafruit_ticks.try()']]]
 ];
