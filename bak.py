@@ -5,20 +5,20 @@
 #
 #
 ##RS485 PINS
-# MISO - Pin 21 (GP16)
-# CS - Pin 22 (GP17)
-# SCK - Pin 24 (GP18)
-# MOSI - Pin 25 (GP19)
-# LED Out - Pin 34(GP 28)
+# MISO  - Pin 21 (GP16)
+# CS    - Pin 22 (GP17)
+# SCK   - Pin 24 (GP18)
+# MOSI  - Pin 25 (GP19)
+# GND   - Pin 38
 # 3v3 Out - Pin 36
-# GND - Pin 38
-
+# LED Out - Pin 34(GP 28)
+#
 ##JOYSTICK PINS
 #GP26_A0, GP27_A1#
-
+#
 ##BUTTON PINS
-#GP0, GP1, GP2,GP3, GP4, GP5#
-
+#GP0, GP1, GP2, GP3, GP4, GP5#
+#
 ##LED PINS ## not connected yet
 #GP6, GP7, GP8, GP9, GP10, GP11, GP12, GP13, GP14#
 
@@ -38,18 +38,23 @@ cs = DigitalInOut(board.GP17)
 cs.switch_to_output()
 spi = busio.SPI(board.GP18, board.GP19, board.GP16)
 can_bus = CAN(spi, cs)
-xaxi = analogio.AnalogIn(board.GP26_A0)
-yaxi = analogio.AnalogIn(board.GP27_A1)
-btn1 = DigitalInOut(board.GP0)
+
+yaxi = analogio.AnalogIn(board.GP26_A0)
+xaxi = analogio.AnalogIn(board.GP27_A1)
+
+btn1 = DigitalInOut(board.GP2)
 btn1.direction = Direction.INPUT
 btn1.pull = Pull.UP
+
 btn2 = DigitalInOut(board.GP1)
 btn2.direction = Direction.INPUT
 btn2.pull = Pull.UP
-btn3 = DigitalInOut(board.GP2)
+
+btn3 = DigitalInOut(board.GP0)
 btn3.direction = Direction.INPUT
 btn3.pull = Pull.UP
-btn4 = DigitalInOut(board.GP3)
+
+btn4 = DigitalInOut(board.GP5)
 btn4.direction = Direction.INPUT
 btn4.pull = Pull.UP
 
@@ -57,45 +62,52 @@ btn4.pull = Pull.UP
 btn5 = DigitalInOut(board.GP4)
 btn5.direction = Direction.INPUT
 btn5.pull = Pull.UP
-btn6 = DigitalInOut(board.GP5)
+btn6 = DigitalInOut(board.GP3)
 btn6.direction = Direction.INPUT
 btn6.pull = Pull.UP
 
 ##LED connections
-led_1 = DigitalInOut(board.GP6)
+led_1 = DigitalInOut(board.GP11)
 led_1.direction = Direction.OUTPUT
 led_1.value=True
-led_2 = DigitalInOut(board.GP7)
+
+led_2 = DigitalInOut(board.GP10)
 led_2.direction = Direction.OUTPUT
 led_2.value=True
-led_3 = DigitalInOut(board.GP8)
+
+led_3 = DigitalInOut(board.GP9)
 led_3.direction = Direction.OUTPUT
 led_3.value=True
-led_4 = DigitalInOut(board.GP9)
+
+led_4 = DigitalInOut(board.GP14)
 led_4.direction = Direction.OUTPUT
 led_4.value=True
 
 ##LED 5 and 6 may change depending on coding in receiving software
-led_5 = DigitalInOut(board.GP10)
+led_5 = DigitalInOut(board.GP8)
 led_5.direction = Direction.OUTPUT
 led_5.value=True
-led_6 = DigitalInOut(board.GP11)
+
+led_6 = DigitalInOut(board.GP12)
 led_6.direction = Direction.OUTPUT
 led_6.value=True
-led_7 = DigitalInOut(board.GP12)
+
+led_7 = DigitalInOut(board.GP13)
 led_7.direction = Direction.OUTPUT
 led_7.value=True
-led_8 = DigitalInOut(board.GP13)
+
+led_8 = DigitalInOut(board.GP7)
 led_8.direction = Direction.OUTPUT
 led_8.value=True
-led_9 = DigitalInOut(board.GP14)
+
+led_9 = DigitalInOut(board.GP6)
 led_9.direction = Direction.OUTPUT
 led_9.value=True
 
 ##Setting the array
-buttons = [True,True,True,True]
-leds = [True, True, True, True, True, True, True, True, True]
-led_status = [led_1, led_2, led_3, led_4, led_5, led_6, led_7, led_8, led_9]
+buttons = [True,True,True,True,True,False]
+leds = [True,True,True,True,True,True,True,True,False]
+led_status = [led_1,led_2,led_3,led_4,led_5,led_6,led_7,led_8,led_9]
 
 #Joystick resolution, calculations based on this
 joy_res = 12
@@ -107,7 +119,7 @@ class Match:
         self.mask = mask
         self.extended = extended
 
-##Send joystick values, adapted to receiving software.
+##Send joystick values, adapted to receiving software. 
 async def send_joystick_position(x, y):
     id = 0x18fdd6F1 ##ID mimics Grayhill
     
@@ -130,15 +142,15 @@ async def send_joystick_position(x, y):
         data[5] = data[5] | 0x04
     if not buttons[3]:
         data[5] = data[5] | 0x01
-        # if self.config == True:
-        #     data[6] = data[6] | 0x40
-        #     self.config = False
-        #     print("Config sent...")     ##Debugging prints
-        
-    ##Button 5 and 6 still not tested
-    # if not buttons[4]:
-    #     data[6] = data[6] | 0x04
-    # if data[6] == 0x04:
+    if not buttons[4]:
+        data[6] = data[6] | 0x04
+    if not buttons[5]:
+        data[6] = data[6] | 0x40
+    
+    ##Button 6 and 4 for configuration - not in current version
+    #if not buttons[4]:
+    #    data[6] = data[6] | 0x04
+    #if data[6] == 0x04:
     #     data[6] = data[6] | 0x40
     #     self.config = True
     #     print("Config...")              ##Debugging prints
@@ -170,7 +182,6 @@ async def send_joystick_position(x, y):
     data[3] = tmp[1]
     
     print(bytes(data))  ##Debugging print
-    #print(x,y)
     
     #Send canmessage, buttons and joystick
     message = Message(id=id, data=bytes(data), extended=True)
@@ -186,9 +197,9 @@ async def read_joystick_position():
         x_list = []
         y_list = []
         for i in range(2000):
-            x_list.append(xaxi.value)           
+            x_list.append(xaxi.value)	          
         for i in range(10):
-            y_list.append(yaxi.value)
+            y_list.append(65635 - yaxi.value)
         x_list.sort()
         y_list.sort()
         x = x_list[1000]
@@ -198,20 +209,23 @@ async def read_joystick_position():
         if abs(y - center_y) < dead_zone:
             y = center_y
             
-      #  print(x,y)     ##Debugging print
+        #print(x,y)     ##Debugging print
       
         await send_joystick_position(x, y)
         await asyncio.sleep(0.01)
-##Read button states
+        
+##Read button states, will be moved.
 async def read_buttons():
     while True:
         buttons[0] = btn1.value
         buttons[1] = btn2.value
         buttons[2] = btn3.value
         buttons[3] = btn4.value
+        buttons[4] = btn5.value
+        buttons[5] = btn6.value
         await asyncio.sleep(0.01)
 
-##Set LEDs        
+##Set LEDs, will be moved.        
 async def set_led():
     while True:
         led_1.value = leds[0]
@@ -235,16 +249,8 @@ async def listen_can(listener):
             #print("Message from: ", hex(msg.id))   ##Debugging print
             #print(msg.data)
             
-            #do something with the data
-
-            if msg.id == 0x18eff302:
+            if msg.id == 0x18eff102:
                 k = msg.data[0]
-#                if k == 6:
-#                    c = (msg.data[1]&0xF0) >> 4
-#                    r = data[1] & 0x0f
-#                    l = data[2] & 0x0f
-                    
-                #else:
                 c = int((msg.data[1]&0xF0) >> 4)
                 led_status[k-1].value= (c==0)		#OK
               
@@ -253,8 +259,8 @@ async def listen_can(listener):
 ##Running main program, setup filters to subscribe
 async def main():
     matches = [
-           Match(0x00ef0002,0xFF,True),      ##Filter 1
-           Match(0x666,0xFFF,True),     ##Filter 2
+           Match(0x00ef0002,0xFF,True),         ##Filter 1
+           Match(0x666,0xFFF,True),             ##Filter 2
            ]
     
     with can_bus.listen(matches) as listener:
@@ -271,3 +277,4 @@ try:
     asyncio.run(main())
 except KeyboardInterrupt:
     print("Program closed")
+
