@@ -78,7 +78,7 @@ for led in led_status:
     led.value = True
 
 ##Send joystick values, adapted to receiving software. Default: id = 0x18fdd6F1 -To speak with SeaDrive software.
-async def send_joystick_position(x, y, button_values):
+async def send_joystick_position(x, y, button_value):
     """
     Info: This function sends the joystick position, button values over the CAN bus.
 
@@ -105,17 +105,17 @@ async def send_joystick_position(x, y, button_values):
     ##CAN send array
     data = [0x01, 0x00, 0x01, 0x00, 0xff, 0x00, 0x00, 0x1f]
     ##Button send values,
-    if button_values[0]:
+    if button_value[0]:
         data[5] = data[5] | 0x40
-    if button_values[1]:
+    if button_value[1]:
         data[5] = data[5] | 0x10
-    if button_values[2]:
+    if button_value[2]:
         data[5] = data[5] | 0x04
-    if button_values[3]:
+    if button_value[3]:
         data[5] = data[5] | 0x01
-    if button_values[4]:
+    if button_value[4]:
         data[6] = data[6] | 0x04
-    if button_values[5]:
+    if button_value[5]:
         data[6] = data[6] | 0x40
     
     ##Joystick send values
@@ -176,26 +176,26 @@ async def read_joystick_position():
     while True:
         x_list = []
         y_list = []
-        for i in range(200):
+        for i in range(500):
             x_list.append(xaxi.value)
             #x_list.append(65536 - xaxi.value)   #inverted - if Joystick is attached upside down        
-        for i in range(200):
+        for i in range(500):
             y_list.append(yaxi.value)
             #y_list.append(65536 - yaxi.value)   #inverted - if Joystick is attached upside down
         x_list.sort()
         y_list.sort()
-        x = x_list[100]
-        y = y_list[100]
+        x = x_list[250]
+        y = y_list[250]
         if abs(x - center_x) < dead_zone:
             x = center_x
         if abs(y - center_y) < dead_zone:
             y = center_y           
             
-        button_values = [not btn.value for btn in buttons]
+        button_value = [not btn.value for btn in buttons]
 
         #print(x,y, button_values)     #Debugging print
         
-        await send_joystick_position(x, y, button_values)
+        await send_joystick_position(x, y, button_value)
         await asyncio.sleep(0)
         
 ##Listening on bus, and set led states.
