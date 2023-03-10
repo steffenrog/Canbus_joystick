@@ -1,9 +1,3 @@
-# Author: Steffen Rogne
-# Brief:  CAN bus test software - receiving
-# 
-#==================================================
-
-
 import can
 import struct
 

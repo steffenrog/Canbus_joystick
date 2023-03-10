@@ -1,10 +1,3 @@
-# Author: Steffen Rogne
-# Brief:  Test software, read canbus with filter. Read Analog Joystick, send joystick values over can.
-# 
-#==================================================
-#
-#
-
 ##RS485 PINS
 # MISO - Pin 21 (GP16)
 # CS - Pin 22 (GP17)
@@ -38,7 +31,7 @@ class Match:
         self.mask = mask
         self.extended = extended
 
-##Packing joystickvalues in 0-1000 range for now
+##Packing joystickvalues in 0-1000 
 async def send_joystick_position(x, y):
     if not (-500 <= x <= 500) or not (-500 <= y <= 500):
         return
@@ -48,31 +41,7 @@ async def send_joystick_position(x, y):
     can_bus.send(message)
     print(f"Joystick position sent: x={x}, y={y}")
 
-##Possible filter to test.
-# N = 5
-# readings = []
-# alpha = 0.7 # adjust this value as needed
-# x_filtered = 0
-# y_filtered = 0
-# 
-# async def read_joystick_position():
-#     global readings, x_filtered, y_filtered
-#     while True:
-#         x = xaxi.value
-#         y = yaxi.value
-#         x_filtered = alpha * x + (1 - alpha) * x_filtered
-#         y_filtered = alpha * y + (1 - alpha) * y_filtered
-#         x_scaled = x_filtered / 64920 * 1000
-#         y_scaled = y_filtered / 65200 * 1000
-#         readings.append((x_scaled, y_scaled))
-#         readings = readings[-N:]
-#         x_avg = sum([x for x, _ in readings]) / N
-#         y_avg = sum([y for _, y in readings]) / N
-#         print(x_avg, y_avg)
-#         await send_joystick_position(x_avg, y_avg)
-#         await asyncio.sleep(0.1)
 
-##Stable reading at 0-500-1000. Tmp stable readings.
 async def read_joystick_position():
     while True:
         x = xaxi.value / 65200 * 1000
