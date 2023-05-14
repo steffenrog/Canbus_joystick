@@ -44,8 +44,8 @@ async def send_joystick_position(x, y):
 
 async def read_joystick_position():
     while True:
-        x = xaxi.value / 65200 * 1000
-        y = yaxi.value / 64000 * 1000
+        x = xaxi.value / 65535 * 1000
+        y = yaxi.value / 65535 * 1000
         
         scale_x = 100/3
         scale_y = 100/3

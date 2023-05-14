@@ -165,7 +165,7 @@ void send_position(int position)
 }
 
 void read_button() {
-    static bool previousButtonValue[6] = {true, true, true, true, true, true};
+    static bool previousButtonValue[6] = {false, false, false, false, false, false};
     int i = 0;
     for (Button &button : buttons) {
         bool currentButtonValue = digitalRead(button.pin);
@@ -203,6 +203,7 @@ void loop()
     {
     xaxi = CENTER_X;
     }
+    
     else if (cruiseControlMode) // Cruise control mode
     {
     lastX = ((xaxi + 25) / 50) * 50; // Round to nearest 50
@@ -213,6 +214,7 @@ void loop()
     {
     yaxi = CENTER_Y;
     }
+    
     else if (cruiseControlMode) // Cruise control mode
     {
     lastY = ((yaxi + 25) / 50) * 50; // Round to nearest 50

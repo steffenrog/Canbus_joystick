@@ -191,37 +191,14 @@ This function is responsible for reading joystick readings, checking if buttons 
 
 Reading Joystick Readings
 The joystick readings are read and stored in 
-x_list
- and 
-y_list
-, two arrays of 500 elements each. The readings are mapped to a range of -4096 to 4096, and then sorted. The middle value of each array is taken and stored in 
-xaxi
- and 
-yaxi
- respectively. The values are then checked to see if they are within the dead zone of 75, and if so, set to the center of 500.
+x_list and y_list, two arrays of 500 elements each. 
+The readings are mapped to a range of -4096 to 4096, and then sorted. 
+The middle value of each array is taken and stored in xaxi and yaxi respectively. 
+The values are then checked to see if they are within the dead zone of 75, and if so, set to the center of 500.
 
 Checking Buttons
-The button values are read and stored in 
-button_value
-, an array of 6 elements.
-
-Checking and Sending CAN Messages
-The CAN messages are read and stored in 
-rxId
-, 
-len
-, and 
-rxBuf
-. The 
-processCANMessage()
- function is then called to process the messages. Finally, a CAN message is sent with the 
-xaxi
-, 
-yaxi
-, and 
-button_value
- values. The LEDs are then flashed, if necessary.
- */
+The button values are read and stored in button_value, an array of 6 elements.
+*/
 {
   // CAN ID Menu
   if (digitalRead(BTN1) == LOW && digitalRead(BTN6) == LOW)
@@ -327,6 +304,13 @@ button_value
   }
 }
 void processCANMessage()
+/*
+Checking and Sending CAN Messages
+The CAN messages are read and stored in rxId, len, and rxBuf. 
+The processCANMessage() function is then called to process the messages. 
+Finally, a CAN message is sent with the xaxi, yaxi, and button_value values. 
+The LEDs are then flashed, if necessary.
+*/
 {
   // If message is for LED control
   if ((rxId & 0x7FFF0000) == 0x18ef0000)
