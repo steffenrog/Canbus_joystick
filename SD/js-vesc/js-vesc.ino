@@ -126,10 +126,25 @@ void send_CAN_message(int data, bool isSpeed) {
 
     // Create the data for the CAN message
     byte msg_data[8];
+
     if (isSpeed) {
-        msg_data = {0, dummy_bytes[0], dummy_bytes[1], dummy_bytes[2], dummy_bytes[3], data_bytes[0], data_bytes[1], 0};
+        msg_data[0] = 0;
+        msg_data[1] = dummy_bytes[0];
+        msg_data[2] = dummy_bytes[1];
+        msg_data[3] = dummy_bytes[2];
+        msg_data[4] = dummy_bytes[3];
+        msg_data[5] = data_bytes[0];
+        msg_data[6] = data_bytes[1];
+        msg_data[7] = 0;
     } else {
-        msg_data = {0, data_bytes[0], data_bytes[1], data_bytes[2], data_bytes[3], dummy_bytes[0], dummy_bytes[1], 0};
+        msg_data[0] = 0;
+        msg_data[1] = data_bytes[0];
+        msg_data[2] = data_bytes[1];
+        msg_data[3] = data_bytes[2];
+        msg_data[4] = data_bytes[3];
+        msg_data[5] = dummy_bytes[0];
+        msg_data[6] = dummy_bytes[1];
+        msg_data[7] = 0;
     }
 
     // Send the CAN message
