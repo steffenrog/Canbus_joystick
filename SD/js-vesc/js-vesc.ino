@@ -16,32 +16,59 @@ MCP_CAN CAN(17);
 #define YAXI 26
 #define ZAXI 28
 
-// LED setup
-const int LED1 = 6;
-const int LED2 = 8;
-const int LED3 = 10;
-const int LED4 = 12;
-const int LED5 = 14;
-const int LED6 = 2;
-const int LED7 = 4;
-const int LED8 = 1;
-const int LED9 = 0;
-const int getLedPin[9] = {LED1, LED2, LED3, LED4, LED5, LED6, LED7, LED8, LED9};
-int led_status[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
-int flash = 0;
+struct Button {
+    int pin;
+    bool value;
+};
 
-// Button setup
-const int BTN1 = 5;
-const int BTN2 = 7;
-const int BTN3 = 9;
-const int BTN4 = 11;
-const int BTN5 = 13;
-const int BTN6 = 3;
-bool button_value[6];
-const int BUTTON_PINS[] = {BTN1, BTN2, BTN3, BTN4, BTN5, BTN6};
+struct Led {
+    int pin;
+    int status;
+};
+
+Button buttons[] = {
+    {5, true},
+    {7, true},
+    {9, true},
+    {11, true},
+    {13, true},
+    {3, true}
+};
+
+Led leds[] = {
+    {6, 0},
+    {8, 0},
+    {10, 0},
+    {12, 0},
+    {14, 0},
+    {2, 0},
+    {4, 0},
+    {1, 0},
+    {0, 0}
+};
+
+const int SAMPLE_SIZE = 500;
+
+// Sampling
+int x_samples[SAMPLE_SIZE];
+int y_samples[SAMPLE_SIZE];
+
+// Cruise setup
+bool cruiseControlMode = false;
+int lastX = 0;
+int lastY = 0;
 
 #define myID  0x0041
 #define myID2 0x0300 | myID
+
+void setupButton(Button &button) {
+    pinMode(button.pin, INPUT_PULLUP);
+    button.value = digitalRead(button.pin);
+}
+
+void setupLed(Led &led) {
+    pinMode(led.pin, OUTPUT);
+}
 
 //Setup run once
 void setup()
@@ -77,125 +104,118 @@ void setup()
   // Joystick 12 bit
   analogReadResolution(12);
 
-  // BTN
-  pinMode(BTN1, INPUT_PULLUP);
-  pinMode(BTN2, INPUT_PULLUP);
-  pinMode(BTN3, INPUT_PULLUP);
-  pinMode(BTN4, INPUT_PULLUP);
-  pinMode(BTN5, INPUT_PULLUP);
-  pinMode(BTN6, INPUT_PULLUP);
-  for (int i = 0; i < 6; i++)
-  {
-    button_value[i] = digitalRead(BUTTON_PINS[i]);
+  for (Button &button : buttons) {
+      setupButton(button);
   }
 
-  // LED
-  pinMode(LED1, OUTPUT);
-  pinMode(LED2, OUTPUT);
-  pinMode(LED3, OUTPUT);
-  pinMode(LED4, OUTPUT);
-  pinMode(LED5, OUTPUT);
-  pinMode(LED6, OUTPUT);
-  pinMode(LED7, OUTPUT);
-  pinMode(LED8, OUTPUT);
-  pinMode(LED9, OUTPUT);
+  for (Led &led : leds) {
+      setupLed(led);
+  }
 }
 
-void send_speed(int speed)
-{
-    speed = (int)speed;
+void send_CAN_message(int data, bool isSpeed) {
+    // Convert the data to bytes
+    byte data_bytes[4];
+    data_bytes[0] = (data >> 24) & 0xFF;
+    data_bytes[1] = (data >> 16) & 0xFF;
+    data_bytes[2] = (data >> 8) & 0xFF;
+    data_bytes[3] = data & 0xFF;
 
-    // Convert the speed to bytes
-    byte speed_bytes[2];
-    speed_bytes[0] = (speed >> 8) & 0xFF;
-    speed_bytes[1] = speed & 0xFF;
-
-    // Create a dummy position value
-    byte pos_bytes[4] = {0, 0, 0, 0};
+    // Create a dummy value
+    byte dummy_bytes[4] = {0, 0, 0, 0};
 
     // Create the data for the CAN message
-    byte data[8] = {0, pos_bytes[0], pos_bytes[1], pos_bytes[2], pos_bytes[3], speed_bytes[0], speed_bytes[1], 0};
+    byte msg_data[8];
+    if (isSpeed) {
+        msg_data = {0, dummy_bytes[0], dummy_bytes[1], dummy_bytes[2], dummy_bytes[3], data_bytes[0], data_bytes[1], 0};
+    } else {
+        msg_data = {0, data_bytes[0], data_bytes[1], data_bytes[2], data_bytes[3], dummy_bytes[0], dummy_bytes[1], 0};
+    }
 
     // Send the CAN message
-    CAN.sendMsgBuf(myID, 0, 8, data);
-   // Serial.print("Sent speed ");
-   // Serial.print(speed);
+    CAN.sendMsgBuf(myID, 0, 8, msg_data);
+    Serial.print("Sent ");
+    Serial.print(isSpeed ? "speed " : "position ");
+    Serial.println(data);
 }
 
-
-void send_position(int position)
+void send_speed(int speed) 
 {
-    // Your position value should be an integer. If it's not, you should convert it to an integer value.
-    position = (int)position;
+  send_CAN_message(speed, true);
+}
 
-    // Convert the position to bytes
-    byte pos_bytes[4];
-    pos_bytes[0] = (position >> 24) & 0xFF;
-    pos_bytes[1] = (position >> 16) & 0xFF;
-    pos_bytes[2] = (position >> 8) & 0xFF;
-    pos_bytes[3] = position & 0xFF;
+void send_position(int position) 
+{
+  send_CAN_message(position, false);
+}
 
-    // Create a dummy speed value
-    byte speed_bytes[2] = {0, 0};
+void read_button() {
+    static bool previousButtonValue[6] = {true, true, true, true, true, true};
+    int i = 0;
+    for (Button &button : buttons) {
+        bool currentButtonValue = digitalRead(button.pin);
 
-    // Create the data for the CAN message
-    byte data[8] = {0, pos_bytes[0], pos_bytes[1], pos_bytes[2], pos_bytes[3], speed_bytes[0], speed_bytes[1], 0};
+        // Your logic here
+        if (!previousButtonValue[i] && currentButtonValue) {
+            cruiseControlMode = !cruiseControlMode;
+        }
 
-    // Send the CAN message
-    CAN.sendMsgBuf(myID, 0, 8, data);
-   // Serial.print("Sent position ");
-    //Serial.println(position);
+        previousButtonValue[i] = currentButtonValue;
+        i++;
+    }
 }
 
 void loop()
 {
-    //long speed = 1000;
-    //long position = 1000;
-    
     // Joystick center
     const int CENTER_X = 0;
     const int CENTER_Y = 0;
     const int DEAD_ZONE = 350;
- 
-    int x_list[500];
-    int y_list[500];
-    for (int i = 0; i < 500; i++)
+    
+    // Sampling
+    for (int i = 0; i < SAMPLE_SIZE; i++)
     {
-      x_list[i] = map(analogRead(XAXI), 0, 4095, -4096, 4096);
-      y_list[i] = map(analogRead(YAXI), 0, 4095, -4096, 4096);
+    x_samples[i] = map(analogRead(XAXI), 0, 4095, -4096, 4096);
+    y_samples[i] = map(analogRead(YAXI), 0, 4095, -4096, 4096);
     }
-    std::sort(x_list, x_list + 500);
-    std::sort(y_list, y_list + 500);
-    int xaxi = x_list[250];
-    int yaxi = y_list[250];
+    std::sort(x_samples, x_samples + SAMPLE_SIZE);
+    std::sort(y_samples, y_samples + SAMPLE_SIZE);
+    int xaxi = x_samples[SAMPLE_SIZE / 2]; // Median
+    int yaxi = y_samples[SAMPLE_SIZE / 2]; // Median
+
+    // Deadzone handling
     if (abs(xaxi - CENTER_X) < DEAD_ZONE)
     {
-      xaxi = CENTER_X;
+    xaxi = CENTER_X;
     }
-    if (abs(yaxi - CENTER_Y) < DEAD_ZONE)
+    else if (cruiseControlMode) // Cruise control mode
     {
-      yaxi = CENTER_Y;
+    lastX = ((xaxi + 25) / 50) * 50; // Round to nearest 50
+    xaxi = lastX;
     }
 
-/*
-    // Check if buttons are pressed
-    button_value[0] = (digitalRead(BTN1));
-    button_value[1] = (digitalRead(BTN2));
-    button_value[2] = (digitalRead(BTN3));
-    button_value[3] = (digitalRead(BTN4));
-    button_value[4] = (digitalRead(BTN5));
-    button_value[5] = (digitalRead(BTN6));
-*/
+    if (abs(yaxi - CENTER_Y) < DEAD_ZONE)
+    {
+    yaxi = CENTER_Y;
+    }
+    else if (cruiseControlMode) // Cruise control mode
+    {
+    lastY = ((yaxi + 25) / 50) * 50; // Round to nearest 50
+    yaxi = lastY;
+    }
 
     send_speed(xaxi);    
     send_position(yaxi);
+    read_button();
     
-    //delay(10); 
+    delay(10); 
 }
 
 
 
 
+
+//Implement this for trimming
 /*
         while (stopFlag)
     {
