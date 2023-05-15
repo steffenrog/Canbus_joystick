@@ -61,6 +61,9 @@ int lastY = 0;
 #define myID  0x0041
 #define myID2 0x0300 | myID
 
+int maxSpeed = 0;
+int increment = 100;
+
 void setupButton(Button &button) {
     pinMode(button.pin, INPUT_PULLUP);
     button.value = digitalRead(button.pin);
@@ -108,9 +111,19 @@ void setup()
       setupButton(button);
   }
 
-  for (Led &led : leds) {
-      setupLed(led);
-  }
+    for (Led &led : leds) {
+        setupLed(led);
+    }
+
+    // Boot-up light sequence
+    for (Led &led : leds) {
+        digitalWrite(led.pin, HIGH); // Turn on LED
+        delay(100); // Wait 100ms
+        digitalWrite(led.pin, LOW); // Turn off LED
+    }
+
+    // Leave the last LED on
+    digitalWrite(leds[sizeof(leds)/sizeof(Led) - 1].pin, HIGH);
 }
 
 void send_CAN_message(int data, bool isSpeed) {
@@ -173,12 +186,19 @@ void read_button() {
         // Your logic here
         if (!previousButtonValue[i] && currentButtonValue) {
             cruiseControlMode = !cruiseControlMode;
+
+            // Update LED0 status
+            leds[0].status = cruiseControlMode ? HIGH : LOW;
+
+            // Actually turn the LED on or off
+            digitalWrite(leds[0].pin, leds[0].status);
         }
 
         previousButtonValue[i] = currentButtonValue;
         i++;
     }
 }
+
 
 void loop()
 {
@@ -190,35 +210,52 @@ void loop()
     // Sampling
     for (int i = 0; i < SAMPLE_SIZE; i++)
     {
-    x_samples[i] = map(analogRead(XAXI), 0, 4095, -4096, 4096);
-    y_samples[i] = map(analogRead(YAXI), 0, 4095, -4096, 4096);
+        x_samples[i] = map(analogRead(XAXI), 0, 4095, -4096, 4096);
+        y_samples[i] = map(analogRead(YAXI), 0, 4095, -4096, 4096);
     }
+    
     std::sort(x_samples, x_samples + SAMPLE_SIZE);
     std::sort(y_samples, y_samples + SAMPLE_SIZE);
+    
     int xaxi = x_samples[SAMPLE_SIZE / 2]; // Median
     int yaxi = y_samples[SAMPLE_SIZE / 2]; // Median
 
     // Deadzone handling
     if (abs(xaxi - CENTER_X) < DEAD_ZONE)
     {
-    xaxi = CENTER_X;
+        xaxi = CENTER_X;
     }
-    
     else if (cruiseControlMode) // Cruise control mode
     {
-    lastX = ((xaxi + 25) / 50) * 50; // Round to nearest 50
-    xaxi = lastX;
+        if(xaxi > maxSpeed) // If the current speed is greater than the max speed, update the max speed
+        {
+            maxSpeed = xaxi;
+        }
+        else if(xaxi < maxSpeed) // If the joystick is moved down, decrease the speed by the increment value
+        {
+            maxSpeed -= increment;
+        }
+
+        xaxi = maxSpeed; // Set the current speed to the max speed
     }
 
     if (abs(yaxi - CENTER_Y) < DEAD_ZONE)
     {
-    yaxi = CENTER_Y;
+        yaxi = CENTER_Y;
     }
-    
     else if (cruiseControlMode) // Cruise control mode
     {
-    lastY = ((yaxi + 25) / 50) * 50; // Round to nearest 50
-    yaxi = lastY;
+        // Similar logic for y axis
+        if(yaxi > maxSpeed)
+        {
+            maxSpeed = yaxi;
+        }
+        else if(yaxi < maxSpeed)
+        {
+            maxSpeed -= increment;
+        }
+
+        yaxi = maxSpeed;
     }
 
     send_speed(xaxi);    
@@ -227,7 +264,6 @@ void loop()
     
     delay(10); 
 }
-
 
 
 
