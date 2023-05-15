@@ -12,9 +12,9 @@
 MCP_CAN CAN(17);
 
 // Joystick pins
-#define XAXI 27 
-#define YAXI 26
-#define ZAXI 28
+#define XAXI 26 
+#define YAXI 27
+//#define ZAXI 28
 
 struct Button {
     int pin;
@@ -57,12 +57,12 @@ int y_samples[SAMPLE_SIZE];
 bool cruiseControlMode = false;
 int lastX = 0;
 int lastY = 0;
+int maxSpeed = 0;
+int increment = 100;
+int lastJoystickDirection = 0; // -1 for down, 0 for center, 1 for up
 
 #define myID  0x0041
 #define myID2 0x0300 | myID
-
-int maxSpeed = 0;
-int increment = 100;
 
 void setupButton(Button &button) {
     pinMode(button.pin, INPUT_PULLUP);
@@ -73,12 +73,9 @@ void setupLed(Led &led) {
     pinMode(led.pin, OUTPUT);
 }
 
-//Setup run once
 void setup()
 {
-  // Init serial, eeprom, and CAN - Serial for debugging - eeprom for storage of can id's - can for communication
   Serial.begin(115200);
-  // while(!Serial){};
   EEPROM.begin(512);
 
   SPI.setSCK(SCK);
@@ -117,13 +114,13 @@ void setup()
 
     // Boot-up light sequence
     for (Led &led : leds) {
-        digitalWrite(led.pin, HIGH); // Turn on LED
+        digitalWrite(led.pin, LOW); // Turn on LED
         delay(100); // Wait 100ms
-        digitalWrite(led.pin, LOW); // Turn off LED
+        digitalWrite(led.pin, HIGH); // Turn off LED
     }
 
-    // Leave the last LED on
-    digitalWrite(leds[sizeof(leds)/sizeof(Led) - 1].pin, HIGH);
+    // Leave the last LED on power.
+    digitalWrite(leds[sizeof(leds)/sizeof(Led) - 1].pin, LOW);
 }
 
 void send_CAN_message(int data, bool isSpeed) {
@@ -183,12 +180,11 @@ void read_button() {
     for (Button &button : buttons) {
         bool currentButtonValue = digitalRead(button.pin);
 
-        // Your logic here
         if (!previousButtonValue[i] && currentButtonValue) {
             cruiseControlMode = !cruiseControlMode;
 
             // Update LED0 status
-            leds[0].status = cruiseControlMode ? HIGH : LOW;
+            leds[0].status = cruiseControlMode ? LOW : HIGH;
 
             // Actually turn the LED on or off
             digitalWrite(leds[0].pin, leds[0].status);
@@ -198,7 +194,6 @@ void read_button() {
         i++;
     }
 }
-
 
 void loop()
 {
@@ -220,77 +215,35 @@ void loop()
     int xaxi = x_samples[SAMPLE_SIZE / 2]; // Median
     int yaxi = y_samples[SAMPLE_SIZE / 2]; // Median
 
-    // Deadzone handling
+       // Deadzone handling
     if (abs(xaxi - CENTER_X) < DEAD_ZONE)
     {
         xaxi = CENTER_X;
     }
     else if (cruiseControlMode) // Cruise control mode
     {
-        if(xaxi > maxSpeed) // If the current speed is greater than the max speed, update the max speed
-        {
-            maxSpeed = xaxi;
-        }
-        else if(xaxi < maxSpeed) // If the joystick is moved down, decrease the speed by the increment value
-        {
-            maxSpeed -= increment;
+        int joystickDirection = xaxi > CENTER_X ? 1 : -1;
+
+        if (joystickDirection == lastJoystickDirection) {
+            // If the joystick is being held in the same direction as the last loop iteration,
+            // increase or decrease speed according to the direction.
+            maxSpeed = joystickDirection == 1 ? min(maxSpeed + increment, xaxi) : max(maxSpeed - increment, xaxi);
         }
 
+        // Else, if the joystick has just been released, keep speed.
+        // maxSpeed keeps its current value.
+
         xaxi = maxSpeed; // Set the current speed to the max speed
+        lastJoystickDirection = joystickDirection;
     }
 
     if (abs(yaxi - CENTER_Y) < DEAD_ZONE)
     {
         yaxi = CENTER_Y;
     }
-    else if (cruiseControlMode) // Cruise control mode
-    {
-        // Similar logic for y axis
-        if(yaxi > maxSpeed)
-        {
-            maxSpeed = yaxi;
-        }
-        else if(yaxi < maxSpeed)
-        {
-            maxSpeed -= increment;
-        }
-
-        yaxi = maxSpeed;
-    }
 
     send_speed(xaxi);    
     send_position(yaxi);
     read_button();
-    
-    delay(10); 
+    delay(10);
 }
-
-
-
-
-//Implement this for trimming
-/*
-        while (stopFlag)
-    {
-      // Select ID
-      for (int i = 0; i < NUM_IDS; i++)
-      {
-        if (digitalRead(BUTTON_PINS[i]) == LOW)
-        {
-          int getLedPin = BUTTON_PINS[i];
-          digitalWrite(getLedPin, HIGH);
-          delay(100);
-          digitalWrite(getLedPin, LOW);
-          delay(100);
-          lastID = ID_LIST[i];
-          // Write new ID to eeprom
-          EEPROM.write(0, lastID);
-          EEPROM.commit();
-          // Starts tasks
-          stopFlag = false;
-          break;
-        }
-      }
-    }
-  }
-*/
